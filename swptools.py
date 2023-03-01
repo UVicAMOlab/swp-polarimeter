@@ -57,7 +57,8 @@ def extract_triggers(trig_dat,thrsh=1,schmidt = 10,TEST=[]):
     for d in range(len(trig_dat)-1):
         deadzone = max(0,deadzone-1)
         if trig_dat[d+1] - trig_dat[d] > thrsh and deadzone is 0:
-            #print(f'Data around trigger: {TEST[d-5:d+5:1]}')
+            #print(f'Data around trigger y1: {TEST[d-5:d+5:1]}')
+            #print(f'Data around trigger y2: {trig_dat[d-2:d+5:1]}')
             trigz = np.append(trigz,int(d))
             deadzone = schmidt
     return trigz.astype(int)

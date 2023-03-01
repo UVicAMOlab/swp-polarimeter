@@ -1,6 +1,6 @@
 # ps_polvis.py
 
-run_offline = True
+run_offline = False
 
 import swptools as swp
 import numpy as np
@@ -17,7 +17,7 @@ daq_settings_file = 'settings/daqsettings.json'
 swp_settings_file = 'settings/swpsettings.json'
 
 do_save = False
-# Load data from json file
+# Load simulation data from json file
 if run_offline:
 	if not os.path.isfile(sim_settings_file):
 		print(f'Error: simulation file {sim_settings_file} not found.')
@@ -147,8 +147,10 @@ def animate_fun(idx):
     else:
         hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
         read_result = hat.a_in_scan_read(samples_per_channel, timeout)
-        y1 = abs(np.array(read_result.data[::2])) - bg_level
-        y2 = read_result.data[1   ::2]
+        y1 = abs(np.array(read_re sult.data[::2])) - bg_level
+        y2 = read_result.data[1::2]
+        #print(f'y1: {y1}')
+        #print(f'y2: {y2}')
         hat.a_in_scan_stop()
         hat.a_in_scan_cleanup()
 
