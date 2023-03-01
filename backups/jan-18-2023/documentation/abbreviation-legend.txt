@@ -1,0 +1,12 @@
+Chunk - ???
+Triggers - ???
+
+
+DOP - Degree of polariazation
+
+
+swptools - spinning waveplate polarization
+        - Hand made by Andrew and past collaborators.
+ 
+
+
