@@ -1,7 +1,9 @@
 # ps_polvis.py
 # testing for git connection on home computer
 
-run_offline = False
+# when true, run script with simulated input data (offline development tool)
+# when false, run script with live data input
+run_offline = True
 
 import swptools as swp
 import numpy as np
@@ -148,18 +150,18 @@ def animate_fun(idx):
     else:
         hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
         read_result = hat.a_in_scan_read(samples_per_channel, timeout)
-        y1 = abs(np.array(read_re sult.data[::2])) - bg_level
+        y1 = abs(np.array(read_result.data[::2])) - bg_level
         y2 = read_result.data[1::2]
         #print(f'y1: {y1}')
         #print(f'y2: {y2}')
         hat.a_in_scan_stop()
         hat.a_in_scan_cleanup()
 
-    trigz = swp.extract_triggers(y2,TEST = y1)
+    chunk_borders = swp.extract_triggers(y2,TEST = y1)
     #print(f'Data around trigger: {y1[d-1:d+3:1]}')
 
 # I'm rewriting this part of the algorithm, if only because I'm too stoopid to git it. - AM
-    Nchunks = len(trigz)-1
+    num_chunks = len(chunk_borders)-1
 
     Nroll = 0 # Holds rolling average of pts per chunk (PPC). Used for accuracy warning.
     # For each chunk we calculate the 0,2w, and 4w comonents, averaged over all chunks
@@ -167,13 +169,13 @@ def animate_fun(idx):
 
     S = np.zeros(4)
 
-    for k in range(Nchunks):
-        chunk = np.array(y1[trigz[k]:trigz[k+1]])
+    for k in range(num_chunks):
+        chunk = np.array(y1[chunk_borders[k]:chunk_borders[k+1]])
         #get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = False):
-        S += swp.get_stokes_from_chunk(chunk,wp_ret = wp_phi,phs_ofst = trigger_phase,verbose = False)
+        S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         Nroll = (Nroll*k + len(chunk))/(k+1) # Update (PPC)
     #computing Stokes Parameters from Fourier Shenanigans (see analysis document)
-    S /= Nchunks
+    S /= num_chunks
     S /= S[0]
     
     DOP = np.sqrt(S[1]**2 + S[2]**2 + S[3]**2)
@@ -181,7 +183,6 @@ def animate_fun(idx):
 	    with open(data_log_file,'a') as f:
 	    	f.write(f'{S[1]},{S[2]},{S[3]},{DOP}\n')
 
-    # estr = 'warnings: '
 # All kinds of warnings!!!
     if Nroll < 180:
         # print('Warning: insufficient points per revolution for accurate data - slow\'er down!')
@@ -196,7 +197,7 @@ def animate_fun(idx):
     if np.mean(y1) < 0.08:
         estr += f'Light level too low    '
         
-    if Nchunks < 3:
+    if num_chunks < 3:
         estr += f'Insufficient chunks    '
       
     txt_err.set_text(f'({round(np.mean(y1),2)},{round(S[1],2)},{round(S[2],2)},{round(S[3],2)})\n'+estr)
