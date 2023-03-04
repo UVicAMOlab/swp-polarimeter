@@ -1,4 +1,5 @@
 # ps_polvis.py
+# testing for git connection on home computer
 
 run_offline = False
 
