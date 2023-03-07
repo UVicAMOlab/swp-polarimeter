@@ -1,7 +1,7 @@
 import numpy as np
 #from scipy import integrate as sp
 
-def get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = True):
+def get_stokes_from_chunk(chunk, wp_ret = np.pi/2, phs_ofst = 0, verbose = True):
     '''
     Reverse engineers Stoke's vectors from a given chunks data.
     - wp_ret: ??? wave plate phase (from swpsettings)
@@ -11,12 +11,13 @@ def get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = True):
     
     a0,b0,c0,d0,n0 = 0,0,0,0,0
 
-    wt = np.linspace(0,2*np.pi,len(cnk))
-    a0 = np.trapz(cnk,wt)/(2*np.pi)
-    n0 = np.trapz(cnk*np.cos(2*(wt-phs_ofst)),wt)/np.pi
-    b0 = np.trapz(cnk*np.sin(2*(wt-phs_ofst)),wt)/np.pi
-    c0 = np.trapz(cnk*np.cos(4*(wt-phs_ofst)),wt)/np.pi
-    d0 = np.trapz(cnk*np.sin(4*(wt-phs_ofst)),wt)/np.pi
+    wt = np.linspace(0,2*np.pi,len(chunk))
+
+    a0 = np.trapz(chunk,wt)/(2*np.pi)
+    n0 = np.trapz(chunk*np.cos(2*(wt-phs_ofst)),wt)/np.pi
+    b0 = np.trapz(chunk*np.sin(2*(wt-phs_ofst)),wt)/np.pi
+    c0 = np.trapz(chunk*np.cos(4*(wt-phs_ofst)),wt)/np.pi
+    d0 = np.trapz(chunk*np.sin(4*(wt-phs_ofst)),wt)/np.pi
     
     #a0 = sp.simpson(cnk,wt)/(2*np.pi)
     #n0 = sp.simpson(cnk*np.cos(2*(wt-phs_ofst)),wt)/np.pi
@@ -44,7 +45,7 @@ def get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = True):
     
     return np.array([S0,S1,S2,S3])/nrm
 
-def extract_triggers(trig_dat,thrsh=1,schmidt = 10,TEST=[]):
+def extract_triggers(triggerData, thrsh = 1, schmidt = 10, TEST=[]):
     '''
     - partitions wave data into chunks.
         - Iterates along wave trace array until (?????) reading jumps dramatically (delta > 1).
@@ -52,18 +53,19 @@ def extract_triggers(trig_dat,thrsh=1,schmidt = 10,TEST=[]):
     - "deadzone" is a buffer of arbitrary length to prevent the same delta being read twice, creating micro chunks
     Perhaps would be better named extract_chunks()?
     '''
-    trigz = np.array([])
+    triggers = np.array([])
     deadzone = 0
-    for d in range(len(trig_dat)-1):
+    for d in range(len(triggerData)-1):
         deadzone = max(0,deadzone-1)
-        if trig_dat[d+1] - trig_dat[d] > thrsh and deadzone is 0:
+        if triggerData[d+1] - triggerData[d] > thrsh and deadzone == 0:
             #print(f'Data around trigger y1: {TEST[d-5:d+5:1]}')
-            #print(f'Data around trigger y2: {trig_dat[d-2:d+5:1]}')
-            trigz = np.append(trigz,int(d))
+            #print(f'Data around trigger y2: {triggerData[d-2:d+5:1]}')
+            triggers = np.append(triggers,int(d))
             deadzone = schmidt
-    return trigz.astype(int)
+    return triggers.astype(int)
 
-def get_polarization_ellipse(S,n_points = 200,scale_by_dop = True, verbose = True):
+
+def get_polarization_ellipse(S, n_points = 200, scale_by_dop = True, verbose = True):
     '''
     given a stokes vector, return x,y points for an ellipse
     - n_points: number of points in x,y arrays
@@ -88,6 +90,7 @@ def get_polarization_ellipse(S,n_points = 200,scale_by_dop = True, verbose = Tru
     psi = 0.5*np.arctan2(S2,S1)
     chi = 0.5*np.arcsin(S3)
     
+    # TODO: Find out what a is supposed to be doing... only used in b/a.. which is just b... ???
     a = 1
     b = np.tan(chi)
     
@@ -119,7 +122,7 @@ def get_polarization_ellipse(S,n_points = 200,scale_by_dop = True, verbose = Tru
 
     return np.array(x)*DPol, np.array(y)*DPol
 
-def sim_pol_data(S0,w0,t0,sig_level=1,ns_level = 0,digitize_mV = 0,v_bias = 0,dphi = np.pi/2,ofst = 0):
+def simulate_polarization_data(S0, w0, t0, sig_level = 1, ns_level = 0, digitize_mV = 0, v_bias = 0, dphi = np.pi/2, ofst = 0):
     '''
     Generates simulated polarimeter data.
     given stokes vector....

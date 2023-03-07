@@ -1,9 +1,12 @@
 # ps_polvis.py
-# testing for git connection on home computer
 
-# when true, run script with simulated input data (offline development tool)
-# when false, run script with live data input
+# When true, run script with simulated input data (offline development tool).
+# When false, run script with live data input.
 run_offline = True
+
+# Save data log in file specified within swp_settings_file
+# TODO: Default file if no file is specified?
+do_save = False
 
 import swptools as swp
 import numpy as np
@@ -19,7 +22,6 @@ sim_settings_file = 'settings/simsettings.json'
 daq_settings_file = 'settings/daqsettings.json'
 swp_settings_file = 'settings/swpsettings.json'
 
-do_save = False
 # Load simulation data from json file
 if run_offline:
 	if not os.path.isfile(sim_settings_file):
@@ -37,6 +39,7 @@ if run_offline:
 			sim_wp_phi = simpams['wp_phase']
 			sim_trigger_phase = simpams['sim_phase_offset']
 			sim_poltype = simpams['sim_poltype']
+
 			if sim_poltype == 'right':
 				S_sim = np.array([1,0,0,1])
 			elif sim_poltype == 'lin':
@@ -51,14 +54,15 @@ if not os.path.isfile(daq_settings_file):
 else:
 	with open(daq_settings_file,'r') as f:
 		daqpams = json.load(f)
-		samples_per_channel = daqpams['samples_per_channel']
+		numSamples = daqpams['samples_per_channel']
 		scan_rate = daqpams['scan_rate']
 		channels = daqpams['channels']
 		timeout = daqpams['timeout']
-		Nsmp = samples_per_channel
-		Ts = 1/scan_rate
-		tTot = Ts*Nsmp
-		t = np.linspace(0,tTot-Ts,Nsmp)
+
+		period = 1/scan_rate
+		totalTime = period*numSamples
+		t = np.linspace(0, totalTime-period, numSamples)
+
 		if not run_offline:
 			channel_mask = chan_list_to_mask(channels)
 			num_channels = len(channels)
@@ -78,10 +82,12 @@ else:
 		auto_scale_y_trace = swppams['auto_scale_y_trace']
 		bg_level = swppams['bg_level']
 		data_log_file = swppams['log_data_file']
+
 		if data_log_file != '':
 			do_save = True
 			with open(data_log_file,'w') as f:
 				f.write('')
+
 
 # Set up plot canvas
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
@@ -135,33 +141,38 @@ def animate_fun(idx):
         DP = sim_DOP
         Phi = float(idx/18.)
         w = 2*np.pi*5100/60        
+
         if np.mod(int(idx/50),3) == 0:
-            S_sim = 3*np.array([1,DP*np.cos(Phi)/np.sqrt(2),DP*np.sin(Phi)/np.sqrt(2),DP/np.sqrt(2)])
+            S_sim = 3*np.array([1, DP*np.cos(Phi)/np.sqrt(2), DP*np.sin(Phi)/np.sqrt(2), DP/np.sqrt(2)])
             estr = 'ellip-pol. '+estr
         elif np.mod(int(idx/50),3) == 1:            
-            S_sim = 3*np.array([1,DP*np.cos(Phi),DP*np.sin(Phi),0])
+            S_sim = 3*np.array([1, DP*np.cos(Phi), DP*np.sin(Phi), 0])
             estr = 'lin-pol. '+estr
         else:
             S_sim = 3*np.array([1,0,0,DP])
             estr = 'circ-pol. '+estr
-        y1 = swp.sim_pol_data(S_sim,w,t,ns_level=sim_ns_level,sig_level = sim_siglevel,digitize_mV=sim_digitize, v_bias = sim_bg_level,dphi=sim_wp_phi,ofst = sim_trigger_phase)
-        # y1 = swp.sim_pol_data(S_sim,w,t,ofst = sim_trigger_phase)
-        y2 = 5*(np.mod(w*t,2*np.pi) < np.pi/12)
+
+        y1 = swp.simulate_polarization_data(S_sim, w, t, ns_level=sim_ns_level, sig_level=sim_siglevel, digitize_mV=sim_digitize, 
+                                            v_bias=sim_bg_level, dphi=sim_wp_phi, ofst=sim_trigger_phase)
+        y2 = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
     else:
-        hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
-        read_result = hat.a_in_scan_read(samples_per_channel, timeout)
+        hat.a_in_scan_start(channel_mask, numSamples, scan_rate, options)
+        read_result = hat.a_in_scan_read(numSamples, timeout)
+
+        # TODO: y1 and y2 need more descriptive name. y1=___Data?? y2=triggerData?
         y1 = abs(np.array(read_result.data[::2])) - bg_level
         y2 = read_result.data[1::2]
         #print(f'y1: {y1}')
         #print(f'y2: {y2}')
+
         hat.a_in_scan_stop()
         hat.a_in_scan_cleanup()
 
-    chunk_borders = swp.extract_triggers(y2,TEST = y1)
+    chunkBorderIndices = swp.extract_triggers(y2,TEST = y1)
     #print(f'Data around trigger: {y1[d-1:d+3:1]}')
 
 # I'm rewriting this part of the algorithm, if only because I'm too stoopid to git it. - AM
-    num_chunks = len(chunk_borders)-1
+    numChunks = len(chunkBorderIndices)-1
 
     Nroll = 0 # Holds rolling average of pts per chunk (PPC). Used for accuracy warning.
     # For each chunk we calculate the 0,2w, and 4w comonents, averaged over all chunks
@@ -169,13 +180,13 @@ def animate_fun(idx):
 
     S = np.zeros(4)
 
-    for k in range(num_chunks):
-        chunk = np.array(y1[chunk_borders[k]:chunk_borders[k+1]])
+    for k in range(numChunks):
+        chunk = np.array(y1[chunkBorderIndices[k]:chunkBorderIndices[k+1]])
         #get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = False):
         S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         Nroll = (Nroll*k + len(chunk))/(k+1) # Update (PPC)
     #computing Stokes Parameters from Fourier Shenanigans (see analysis document)
-    S /= num_chunks
+    S /= numChunks
     S /= S[0]
     
     DOP = np.sqrt(S[1]**2 + S[2]**2 + S[3]**2)
@@ -197,11 +208,11 @@ def animate_fun(idx):
     if np.mean(y1) < 0.08:
         estr += f'Light level too low    '
         
-    if num_chunks < 3:
+    if numChunks < 3:
         estr += f'Insufficient chunks    '
       
     txt_err.set_text(f'({round(np.mean(y1),2)},{round(S[1],2)},{round(S[2],2)},{round(S[3],2)})\n'+estr)
-    x,y = swp.get_polarization_ellipse(S)
+
     
     txt1.set_text(f'DOP: {round(DOP,3)}')
     if run_offline:
@@ -209,15 +220,18 @@ def animate_fun(idx):
         txt2.set_text(f'Error: {round(urr,1)}%')
     else:
         txt2.set_text(f'Mean Signal: {np.mean(y1)}')
-        
-    ln1.set_data(x,y)
     
+# TODO: Why is this different for simulation and for real data? Is there a 
+#       better way to implement simulated data that will require less code?
     for i in range(len(S)):
         bar[i].set_height(S[i])
         if run_offline:
             bar2[i].set_height(S_sim[i]/S_sim[0])
 
     
+    x, y = swp.get_polarization_ellipse(S)
+    ln1.set_data(x,y)
+
     ln3.set_data(range(len(y1)),y1)
     ax3.set_xlim(0, len(y1))
     # ln3.set_data(range(len(chunk)),chunk)
