@@ -5,7 +5,6 @@
 run_offline = True
 
 # Save data log in file specified within swp_settings_file
-# TODO: Default file if no file is specified?
 do_save = False
 
 import swptools as swp
@@ -74,6 +73,8 @@ if not os.path.isfile(swp_settings_file):
     print('Run \'gen_default_json.py\' to generate default file first.')
     exit()
 else:
+    # TODO: auto_scale_y_trace doesn't have an obvious purpose--investigate and 
+    #       rename or remove accordingly.
     with open(swp_settings_file,'r') as f:
         swppams = json.load(f)
         trigger_phase = swppams['trigger_phase']
@@ -136,7 +137,7 @@ def init_animation():
 def fetch_input_data(idx):
     '''
     If run_offline, generates simulated input data.
-    If not run_offline, fetches live input data from raspberry pi using daqhats.
+    If not run_offline, fetches live input data from raspberry pi mcc118 using daqhats.
     '''
     if run_offline:
         DP = sim_DOP
@@ -144,7 +145,7 @@ def fetch_input_data(idx):
         w = 2*np.pi*5100/60        
 
         if np.mod(int(idx/50),3) == 0:
-            S_sim = 3*np.array([1, DP*np.cos(Phi)/np.sqrt(2), DP*np.sin(Phi)/np.sqrt(2),                                DP/np.sqrt(2)])
+            S_sim = 3*np.array([1, DP*np.cos(Phi)/np.sqrt(2), DP*np.sin(Phi)/np.sqrt(2), DP/np.sqrt(2)])
 #            estr = 'ellip-pol. '+estr
         elif np.mod(int(idx/50),3) == 1:            
             S_sim = 3*np.array([1, DP*np.cos(Phi), DP*np.sin(Phi), 0])
@@ -153,23 +154,21 @@ def fetch_input_data(idx):
             S_sim = 3*np.array([1,0,0,DP])
 #            estr = 'circ-pol. '+estr
 
-        y1 = swp.simulate_polarization_data(S_sim, w, t, ns_level=sim_ns_level, sig_level=sim_siglevel, digitize_mV=sim_digitize, 
+        input_data = swp.simulate_polarization_data(S_sim, w, t, ns_level=sim_ns_level, sig_level=sim_siglevel, digitize_mV=sim_digitize, 
                                             v_bias=sim_bg_level, dphi=sim_wp_phi, ofst=sim_trigger_phase)
-        y2 = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
-
+        trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
     else:
         hat.a_in_scan_start(channel_mask, num_samples, scan_rate, options)
         read_result = hat.a_in_scan_read(num_samples, timeout)
 
-        # TODO: y1 and y2 need more descriptive name. y1=___Data?? y2=triggerData?
-        y1 = abs(np.array(read_result.data[::2])) - bg_level
-        y2 = read_result.data[1::2]
-        #print(f'y1: {y1}')
-        #print(f'y2: {y2}')
+        input_data = abs(np.array(read_result.data[::2])) - bg_level
+        trigger_data = read_result.data[1::2]
+        #print(f'input_data: {input_data}'); print(f'trigger_data: {trigger_data}')
 
         hat.a_in_scan_stop()
         hat.a_in_scan_cleanup()
-    return y1, y2, idx
+
+    return input_data, trigger_data, idx
 
 
 # TODO: Find out what idx is and what it does. Any way to avoid it?
@@ -178,21 +177,20 @@ def animate_fun(idx):
     global phs, t, S_sim
     estr = 'warnings: '
 
-    y1, y2, idx = fetch_input_data(idx)
+    input_data, trigger_data, idx = fetch_input_data(idx)
 
 # I'm rewriting this part of the algorithm, if only because I'm too stoopid to git it. - AM
-    chunk_border_indecies = swp.extract_triggers(y2,TEST = y1)
-    #print(f'Data around trigger: {y1[d-1:d+3:1]}')
+    chunk_border_indecies = swp.extract_triggers(trigger_data,TEST = input_data)
+    #print(f'Data around trigger: {input_data[d-1:d+3:1]}')
     num_chunks = len(chunk_border_indecies)-1
 
     Nroll = 0 # Holds rolling average of pts per chunk (PPC). Used for accuracy warning.
     # For each chunk we calculate the 0,2w, and 4w comonents, averaged over all chunks
-    # get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = False):
 
     S = np.zeros(4)
 
     for k in range(num_chunks):
-        chunk = np.array(y1[chunk_border_indecies[k]:chunk_border_indecies[k+1]])
+        chunk = np.array(input_data[chunk_border_indecies[k]:chunk_border_indecies[k+1]])
         #get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = False):
         S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         Nroll = (Nroll*k + len(chunk))/(k+1) # Update (PPC)
@@ -216,21 +214,20 @@ def animate_fun(idx):
     #     # print(f'Warning: Possible alignment error: large cos(2wt) component detected (S,C) = ({b0/nrm},{n0/nrm})')
     #     estr += f'non-zero cos(2w): {round(n0,2)} cf {round(b0*prf/nrm,2)}    '
 
-    if np.mean(y1) < 0.08:
+    if np.mean(input_data) < 0.08:
         estr += f'Light level too low    '
 
     if num_chunks < 3:
         estr += f'Insufficient chunks    '
 
-    txt_err.set_text(f'({round(np.mean(y1),2)},{round(S[1],2)},{round(S[2],2)},{round(S[3],2)})\n'+estr)
-
+    txt_err.set_text(f'({round(np.mean(input_data),2)},{round(S[1],2)},{round(S[2],2)},{round(S[3],2)})\n'+estr)
 
     txt1.set_text(f'DOP: {round(DOP,3)}')
     if run_offline:
-        urr = 100*abs(DOP - sim_DOP)/sim_DOP
-        txt2.set_text(f'Error: {round(urr,1)}%')
+        sim_error = 100*abs(DOP - sim_DOP)/sim_DOP
+        txt2.set_text(f'Error: {round(sim_error,1)}%')
     else:
-        txt2.set_text(f'Mean Signal: {np.mean(y1)}')
+        txt2.set_text(f'Mean Signal: {np.mean(input_data)}')
 
 # TODO: Why is this different for simulation and for real data? Is there a 
 #       better way to implement simulated data that will require less code?
@@ -243,8 +240,8 @@ def animate_fun(idx):
     x, y = swp.get_polarization_ellipse(S)
     ln1.set_data(x,y)
 
-    ln3.set_data(range(len(y1)),y1)
-    ax3.set_xlim(0, len(y1))
+    ln3.set_data(range(len(input_data)),input_data)
+    ax3.set_xlim(0, len(input_data))
     # ln3.set_data(range(len(chunk)),chunk)
     # if auto_scale_y_trace:
     #     ax3.set_ylim(min(chunk) + 0.001, max(chunk) +0.001)
