@@ -132,7 +132,7 @@ def init_animation():
     ax3.set_title('Trace')
     ax3.grid()
 
-    return ln1,bar,txt1,ln3,txt_err
+    return ln1, bar, txt1, ln3, txt_err
 
 def fetch_input_data(idx):
     '''
@@ -140,18 +140,17 @@ def fetch_input_data(idx):
     If not run_offline, fetches live input data from raspberry pi mcc118 using daqhats.
     '''
     if run_offline:
-        DP = sim_DOP
-        Phi = float(idx/18.)
+        sim_phi = float(idx/18.)
         w = 2*np.pi*5100/60        
 
         if np.mod(int(idx/50),3) == 0:
-            S_sim = 3*np.array([1, DP*np.cos(Phi)/np.sqrt(2), DP*np.sin(Phi)/np.sqrt(2), DP/np.sqrt(2)])
+            S_sim = 3*np.array([1, sim_DOP*np.cos(sim_phi)/np.sqrt(2), sim_DOP*np.sin(sim_phi)/np.sqrt(2), sim_DOP/np.sqrt(2)])
 #            estr = 'ellip-pol. '+estr
         elif np.mod(int(idx/50),3) == 1:            
-            S_sim = 3*np.array([1, DP*np.cos(Phi), DP*np.sin(Phi), 0])
+            S_sim = 3*np.array([1, sim_DOP*np.cos(sim_phi), sim_DOP*np.sin(sim_phi), 0])
 #            estr = 'lin-pol. '+estr
         else:
-            S_sim = 3*np.array([1,0,0,DP])
+            S_sim = 3*np.array([1,0,0,sim_DOP])
 #            estr = 'circ-pol. '+estr
 
         input_data = swp.simulate_polarization_data(S_sim, w, t, ns_level=sim_ns_level, sig_level=sim_siglevel, digitize_mV=sim_digitize, 
@@ -191,7 +190,6 @@ def animate_fun(idx):
 
     for k in range(num_chunks):
         chunk = np.array(input_data[chunk_border_indecies[k]:chunk_border_indecies[k+1]])
-        #get_stokes_from_chunk(cnk,wp_ret = np.pi/2,phs_ofst = 0,verbose = False):
         S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         Nroll = (Nroll*k + len(chunk))/(k+1) # Update (PPC)
     #computing Stokes Parameters from Fourier Shenanigans (see analysis document)
@@ -210,9 +208,6 @@ def animate_fun(idx):
     if DOP-1 > .03:
         # print(f'Warning: Possible unphysical DOP = {round(DOP,2)} measured...')
         estr += f'Unphysical DOP ({round(DOP,3)})    '
-    # if n0 > 4e-2:
-    #     # print(f'Warning: Possible alignment error: large cos(2wt) component detected (S,C) = ({b0/nrm},{n0/nrm})')
-    #     estr += f'non-zero cos(2w): {round(n0,2)} cf {round(b0*prf/nrm,2)}    '
 
     if np.mean(input_data) < 0.08:
         estr += f'Light level too low    '
