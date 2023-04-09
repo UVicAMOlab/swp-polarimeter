@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1680397431 "polarimeter_analysis.tex" "polarimeter_analysis.pdf" "polarimeter_analysis" 1680397431 0
+["pdflatex"] 1680507263 "polarimeter_analysis.tex" "polarimeter_analysis.pdf" "polarimeter_analysis" 1680507264 0
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1679564905 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1679564905 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1679564905 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -69,8 +69,8 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1679564905 39911 2da6c67557ec033436fe5418a70a8a61 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1680198634 4491781 539e3b5e308794ddb50e5f94f0e971f4 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1680198610 8204098 be994efa146295970f1afe09c4205295 ""
-  "polarimeter_analysis.aux" 1680397431 2622 512ebd5e1954e48d78a0a0c97af0c834 "pdflatex"
-  "polarimeter_analysis.tex" 1680397426 18111 479e68d585de7a03639eef50874e1835 ""
+  "polarimeter_analysis.aux" 1680507264 2622 512ebd5e1954e48d78a0a0c97af0c834 "pdflatex"
+  "polarimeter_analysis.tex" 1680422579 17958 678d63078af019c94febbadc6270fd51 ""
   "wave_plate_cal.png" 1680396655 25049 b5eacff75b9367740203c5476646dbdc ""
   (generated)
   "polarimeter_analysis.aux"
