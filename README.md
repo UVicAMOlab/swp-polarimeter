@@ -3,7 +3,7 @@
 # Real-time detection for polarization of a light source.
 
 (Short introdctory paragraph)
-- Using a rotating quarter-waveplate, a photodiode, and a few Python scripts, we are able to determine if incident light is polarized linearly, elliptically, or circularly.
+- Using a rotating quarter-waveplate, a photodiode, and a few Python scripts, we are able to determine the polarization of incident light: linear, elliptical, or circular.
 - With minimal cost and technical knowledge this apparatus can be assembled easily.
 
 (Longer more technical paragraph)
