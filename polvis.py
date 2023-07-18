@@ -1,10 +1,9 @@
 # ps_polvis.py
 
-# When true, run script with simulated input data (offline development tool).
-# When false, run script with live data input.
-run_offline = False
+# When run_offline, simulated polarization data will be used. 
+run_offline = True
 
-# Save data log in file specified within swp_settings_file
+# Save data log in file specified within swp_settings_file.
 do_save = False
 
 import swptools as swp
@@ -39,11 +38,11 @@ if run_offline:
             sim_poltype = simpams['sim_poltype']
 
             if sim_poltype == 'right':
-                S_sim = np.array([1,0,0,1])
+                sim_S = np.array([1,0,0,1])
             elif sim_poltype == 'lin':
-                S_sim = np.array([1,1,0,0])
+                sim_S = np.array([1,1,0,0])
             else:
-                S_sim = np.array([1,np.sqrt(.3),np.sqrt(.3),np.sqrt(.4)])
+                sim_S = np.array([1,np.sqrt(.3),np.sqrt(.3),np.sqrt(.4)])
 
 if not os.path.isfile(daq_settings_file):
     print(f'Error: simulation file {sim_settings_file} not found.')
@@ -76,12 +75,12 @@ else:
     # TODO: auto_scale_y_trace doesn't have an obvious purpose--investigate and 
     #       rename or remove accordingly.
     with open(swp_settings_file,'r') as f:
-        swppams = json.load(f)
-        trigger_phase = swppams['trigger_phase']
-        wp_phi = swppams['wp_phi']
-        auto_scale_y_trace = swppams['auto_scale_y_trace']
-        bg_level = swppams['bg_level']
-        data_log_file = swppams['log_data_file']
+        swp_params = json.load(f)
+        trigger_phase = swp_params['trigger_phase']
+        wp_phi = swp_params['wp_phi']
+        auto_scale_y_trace = swp_params['auto_scale_y_trace']
+        bg_level = swp_params['bg_level']
+        data_log_file = swp_params['log_data_file']
 
         if data_log_file != '':
             do_save = True
@@ -144,17 +143,16 @@ def fetch_input_data(idx):
         w = 2*np.pi*5100/60        
 
         if np.mod(int(idx/50),3) == 0:
-            S_sim = 3*np.array([1, sim_DOP*np.cos(sim_phi)/np.sqrt(2), sim_DOP*np.sin(sim_phi)/np.sqrt(2), sim_DOP/np.sqrt(2)])
+            sim_S = 3*np.array([1, sim_DOP*np.cos(sim_phi)/np.sqrt(2), sim_DOP*np.sin(sim_phi)/np.sqrt(2), sim_DOP/np.sqrt(2)])
 #            estr = 'ellip-pol. '+estr
         elif np.mod(int(idx/50),3) == 1:            
-            S_sim = 3*np.array([1, sim_DOP*np.cos(sim_phi), sim_DOP*np.sin(sim_phi), 0])
+            sim_S = 3*np.array([1, sim_DOP*np.cos(sim_phi), sim_DOP*np.sin(sim_phi), 0])
 #            estr = 'lin-pol. '+estr
         else:
-            S_sim = 3*np.array([1,0,0,sim_DOP])
+            sim_S = 3*np.array([1,0,0,sim_DOP])
 #            estr = 'circ-pol. '+estr
 
-        input_data = swp.simulate_polarization_data(S_sim, w, t, ns_level=sim_ns_level, sig_level=sim_siglevel, digitize_mV=sim_digitize, 
-                                            v_bias=sim_bg_level, dphi=sim_wp_phi, ofst=sim_trigger_phase)
+        input_data = swp.simulate_polarization_data(sim_S, w, t, sim_siglevel, sim_ns_level, sim_digitize, sim_bg_level, sim_wp_phi, sim_trigger_phase)
         trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
     else:
         hat.a_in_scan_start(channel_mask, num_samples, scan_rate, options)
@@ -173,13 +171,13 @@ def fetch_input_data(idx):
 # TODO: Find out what idx is and what it does. Any way to avoid it?
 #       seems to only be used when run_offline
 def animate_fun(idx):
-    global phs, t, S_sim
+    global phs, t, sim_S
     estr = 'warnings: '
 
     input_data, trigger_data, idx = fetch_input_data(idx)
 
 # I'm rewriting this part of the algorithm, if only because I'm too stoopid to git it. - AM
-    chunk_border_indecies = swp.extract_triggers(trigger_data,TEST = input_data)
+    chunk_border_indecies = swp.extract_triggers(trigger_data, TEST = input_data)
     #print(f'Data around trigger: {input_data[d-1:d+3:1]}')
     num_chunks = len(chunk_border_indecies)-1
 
@@ -229,7 +227,7 @@ def animate_fun(idx):
     for i in range(len(S)):
         bar[i].set_height(S[i])
         if run_offline:
-            bar2[i].set_height(S_sim[i]/S_sim[0])
+            bar2[i].set_height(sim_S[i]/sim_S[0])
 
 
     x, y = swp.get_polarization_ellipse(S)
