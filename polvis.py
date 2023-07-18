@@ -2,7 +2,7 @@
 
 # When true, run script with simulated input data (offline development tool).
 # When false, run script with live data input.
-run_offline = True
+run_offline = False
 
 # Save data log in file specified within swp_settings_file
 do_save = False
@@ -48,7 +48,7 @@ if run_offline:
 if not os.path.isfile(daq_settings_file):
     print(f'Error: simulation file {sim_settings_file} not found.')
     print('Run \'gen_default_json.py\' to generate default file first.')
-    exit()
+    exit
 else:
     with open(daq_settings_file,'r') as f:
         daqpams = json.load(f)
@@ -246,3 +246,4 @@ def animate_fun(idx):
 
 annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150)
 plt.show()
+ 
