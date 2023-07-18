@@ -1,5 +1,3 @@
-#This is simply a change made to add/commit to my local repo for testing sake
-
 # ps_polvis.py
 
 # When run_offline, simulated polarization data will be used. 
