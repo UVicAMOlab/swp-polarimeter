@@ -1,7 +1,7 @@
 # ps_polvis.py
 
 # When run_offline, simulated polarization data will be used. 
-run_offline = True
+run_offline = False
 
 # Save data log in file specified within swp_settings_file.
 do_save = False
