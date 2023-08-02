@@ -1,7 +1,7 @@
 # ps_polvis.py
 
-# When run_offline, simulated polarization data will be used.
-run_offline = True
+# When run_offline, simulated polarization data will be used. 
+run_offline = False
 
 # Save data log in file specified within swp_settings_file.
 do_save = False
@@ -53,8 +53,9 @@ if run_offline:
 if not os.path.isfile(daq_settings_file):
     print(f'Error: simulation file {sim_settings_file} not found.')
     print('Run \'gen_default_json.py\' to generate default file first.')
+    
     exit()
-
+  
 else:
     # Retrieving hardcoded DAQ parameters from json file. 
     with open(daq_settings_file,'r') as f:
@@ -286,3 +287,4 @@ def animate_fun(idx):
 # Begins animation.
 annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150)
 plt.show()
+ 
