@@ -1,10 +1,9 @@
 import numpy as np
 
-def extract_triggers(trigger_data, threshold = 1, schmidt = 10, TEST=[]):
+def extract_chunks(trigger_data, threshold = 1, schmidt = 10, TEST=[]):
     '''Partitions wave data into chunks.
 
     - number of chunks is proportional to the spinning waveplate's frequency.
-    Perhaps would be better named extract_chunks()?
     '''
     triggers = np.array([])
     deadzone = 0
