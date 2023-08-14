@@ -3,6 +3,7 @@
 # When run_offline, simulated polarization data will be used. 
 run_offline = False
 
+
 # Save data log in file specified within swp_settings_file.
 do_save = False
 
@@ -55,7 +56,7 @@ if not os.path.isfile(daq_settings_file):
     print('Run \'gen_default_json.py\' to generate default file first.')
     
     exit()
-  
+
 else:
     # Retrieving hardcoded DAQ parameters from json file. 
     with open(daq_settings_file,'r') as f:
