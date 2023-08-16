@@ -24,6 +24,8 @@ The continuous data input through the Raspberry Pi's MCC DAQ hat along with the 
 # Diagram?
 
 
+
+
 # Operation Instructions
 -- example step by step process of running device and code from the ground up.
 - how to interpret UI
