@@ -20,42 +20,33 @@ The continuous data input through the Raspberry Pi's MCC DAQ hat along with the 
 - Mean input signal over several segments of data
 - Waveform incident on photodiode
 
+# Getting Started
 
-# Apparatus Diagram
+## Manufacturing Process
 
+**PHYSICAL APPARATUS**
+
+Our spinning waveplate polarimeter utilizes a high speed motor connected to an internally threaded rotating lens tube by a timing belt. Low friction ball bearings press-fit into the main base housing the lens tube. A polymer zero-order waveplate is threaded inside the tube. At the top of the timing belt, the upper gear contains a small magnet that is detected by the hall sensor which provides a reference angle and acquisition triggering. We chose a photodiode with an integrated transimpedance of 100 k$\omega$ followed by a second non-inverting opamp with a variable gain from 1 to 11 via an accessible 10 k$\omega$ potentiometer. The photodetection circuitry is housed by a 3D printed adapter plate which contains a thick polarizing sheet. The photodiode and hall sensor trigger outputs are sent into the Raspberry Pi computer which is modified with a 12 bit, 100 ksps data acquisistion hat (DAQ).
+    
 ![plot](./docs/analysis/Diagram.png)
+Fig.1 - Diagram of polarimeter design.
 
+**PCB**
+    - printing (Needs to be updated with new photodiode circuit design)
 
+**CODE INSTALLATION**
 
-# Operation Instructions
+For code installation please simply download the .zip file, or clone the repository.
+
+## Operation Instructions
 -- example step by step process of running device and code from the ground up.
 - how to interpret UI
 - warnings?
 - alignment?
 
-
-# Optional Features?
-- 3D representation of polarization?
-
-
-# Manufacturing Process
---- PHYSICAL APPARATUS
-    - body
-    - motor
-    - pcb shell
-
---- PCB
-    - printing
-
---- CODE INSTALLATION
-    - cloning repository or downloading zip file
-    - running python script
-
-
-# Calibration Instructions
+## Calibration Instructions
 - waveplate retardance
-- trigger delay
-
+- trigger delayß
 
 # Known Limitations
 - how accurate is the polarimeter (say it again)
