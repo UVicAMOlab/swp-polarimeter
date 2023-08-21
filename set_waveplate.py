@@ -1,7 +1,7 @@
 import json
 import numpy as np
 
-# Enter max, min, and bg voltage here
+# Enter max, min, and background voltage here
 v_min = 0.84
 v_max = 3.4
 v_bg = 3.2e-2
