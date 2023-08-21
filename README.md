@@ -1,8 +1,4 @@
-## Spinning Waveplate Polarimeter
-
-*Using a rotating quarter waveplate, a photodiode, and a few Python scripts, we can produce real-time visualization of the polarization state of incident light. This fully integrated system is easily calibrated and an affordable alternative to other fussy optical technologies making it ideal for research laboratories and educational environments.*
-
-# Real-time Detection of Polarization of Incident Light
+## Spinning Waveplate Polarimeter*Using a rotating quarter waveplate, a photodiode, and a few Python scripts, we can produce real-time visualization of the polarization state of incident light. This fully integrated system is easily calibrated and an affordable alternative to other fussy optical technologies making it ideal for research laboratories and educational environments.*# Real-time Detection of Polarization of Incident Light
 
 Initially, we use the API provided by the DAQ hat to acquire a fixed number of samples for processing; typically, this is 1000 samples at 20 ksps when the waveplate is spinning between 4500 to 5500 RPM. The raw data input is then divided into segments. Each segment is numerically integrated to determine the Fourier coefficients, and furthermore, the Stokes parameters and polarization state. To minimize any statistical errors, the mean result over several segments is considered and the display is refreshed at a rate of 4 Hz.
 
