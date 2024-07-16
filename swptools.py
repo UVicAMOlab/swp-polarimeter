@@ -51,10 +51,11 @@ Returns:
     sin_delta = np.sin(wp_ret)
 
     # Calculating results of equations (22a-d) in polarimeter_analysis.pdf
-    S0 = 2*(a0 - c0*(1+cos_delta)/(1-cos_delta))    # total intensity of optical beam
+    # S0 = 2*(a0 - c0*(1+cos_delta)/(1-cos_delta))    # total intensity of optical beam
     S1 = 4*c0/(1-cos_delta)                         # preponderance of LHP over LVP
     S2 = 4*d0/(1-cos_delta)                         # preponderance of L+45P over L-45P
     S3 = -2*b0/sin_delta                            # preponderance of RCP over LCP
+    S0 = 2*a0 - (1+cos_delta)*S1/2
 
     normalization_factor = S0
 

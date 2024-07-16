@@ -1,7 +1,7 @@
 # ps_polvis.py
 
 # When run_offline, simulated polarization data will be used. 
-run_offline = False
+run_offline = True
 
 
 # Save data log in file specified within swp_settings_file.
@@ -168,7 +168,7 @@ def fetch_input_data(idx):
         
         # *** Not wanted in final version -- is that all offline sim code or just this "demo"? -WS ***
         if np.mod(int(idx/50),3) == 0:
-            sim_S = 3*np.array([1, sim_DOP*np.cos(sim_phi)/np.sqrt(2), sim_DOP*np.sin(sim_phi)/np.sqrt(2), sim_DOP/np.sqrt(2)])
+            sim_S = 3*np.array([1, sim_DOP*np.cos(sim_phi)/2, sim_DOP*np.sin(sim_phi)/2, sim_DOP*np.sqrt(3)/2])
 
         elif np.mod(int(idx/50),3) == 1:            
             sim_S = 3*np.array([1, sim_DOP*np.cos(sim_phi), sim_DOP*np.sin(sim_phi), 0])
@@ -224,7 +224,7 @@ def animate_fun(idx):
     # Creating chunks and calculating Stokes vectors of each chunk (see "polarimeter_analysis" doc). 
     S = np.zeros(4)
     for k in range(num_chunks):
-        chunk = np.array(input_data[chunk_border_indecies[k]:chunk_border_indecies[k+1]])
+        chunk = np.array(input_data[chunk_border_indecies[k]:chunk_border_indecies[k+1]]) - bg_level
         S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         # Update (PPC)
         Nroll = (Nroll*k + len(chunk))/(k+1)
