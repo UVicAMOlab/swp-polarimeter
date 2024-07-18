@@ -1,11 +1,14 @@
+# Importing required files.
 import json
 import numpy as np
 
-# Enter max, min, and background voltage here
+# Enter max, min, and background voltage here.
+# These values can be obtained from an oscilloscope. 
 v_min = 0.84
 v_max = 3.4
 v_bg = 3.2e-2
 
+# Sets the retardance calibration for SWP.
 eta = (v_min-v_bg)/(v_max-v_bg)
 phs = np.arccos(2*eta-1)
 with open('settings/swpsettings.json','r') as f:
