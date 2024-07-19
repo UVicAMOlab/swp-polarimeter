@@ -50,6 +50,8 @@ def s(wt, A, B):
 num_traces = 9
 maxs = np.zeros(9)
 mins = np.zeros(9)
+save_chunk = []
+save_wt = []
 for trace in range(num_traces):
 	hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
 	read_result = hat.a_in_scan_read(samples_per_channel, timeout)
@@ -69,6 +71,9 @@ for trace in range(num_traces):
 		vars = opt.curve_fit(s, wt, chunk)[0]
 		maxs[trace] = vars[1] + vars[0]
 		mins[trace] = vars[1] - vars[0]
+		if k == num_chunks - 1:
+			save_wt = np.append(save_wt, wt)
+			save_chunk = np.append(save_chunk, chunk)
 
 v_max = np.mean(maxs)
 v_min = np.mean(mins)
@@ -82,3 +87,9 @@ with open(swp_settings_file,'r') as f:
 
 with open(swp_settings_file,'w') as f:
 	json.dump(params, f)
+
+plt.plot(save_wt, save_chunk)
+plt.plot(save_wt, s(save_wt, (v_max-v_min)/2, (v_max+v_min)/2))
+plt.show()
+
+print('done')

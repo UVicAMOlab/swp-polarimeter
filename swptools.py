@@ -74,7 +74,7 @@ Returns:
     return np.array([S0,S1,S2,S3])/normalization_factor
 
 
-def get_polarization_ellipse(S, num_points = 200, scale_by_dop = False, verbose = True):
+def get_polarization_ellipse(S, num_points = 200, scale_by_dop = True, verbose = True):
     '''Given an array of Stokes vectors, return x,y points for their polarization ellipse. 
 
     - num_points: number of points in x,y arrays

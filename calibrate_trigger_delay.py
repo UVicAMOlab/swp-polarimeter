@@ -68,8 +68,8 @@ for trace in range(num_traces):
         for k in range(num_chunks):
             chunk = input_data[chunk_border_indices[k]:chunk_border_indices[k+1]]
             wt = np.linspace(0, 2*np.pi, len(chunk))
-            n0 += np.trapz(chunk*np.cos(2*(wt-phs)), wt) # TODO: Check if this should be cos(2*wt - phs)
-        # Dividing by num_chunks for scaling in later plot???
+            n0 += np.trapz(chunk*np.cos(2*(wt-phs)), wt)
+
         orth_integ = np.append(orth_integ, n0/num_chunks)
 
     '''
