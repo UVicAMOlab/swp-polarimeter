@@ -1,12 +1,5 @@
 # ps_polvis.py
 
-# When run_offline, simulated polarization data will be used. 
-run_offline = True
-
-
-# Save data log in file specified within swp_settings_file.
-do_save = False
-
 # Import vital packages/tools.
 import swptools as swp
 import numpy as np
@@ -14,10 +7,15 @@ from matplotlib import pyplot as plt, animation
 import json
 import os.path
 
+# When run_offline = True, simulated polarization data will be used.
+run_offline = True
+# Save data log in file specified within swp_settings_file.
+do_save = False
+
 if not run_offline:
-    from daqhats import mcc118, OptionFlags, HatIDs
-    from daqhats_utils import select_hat_device, chan_list_to_mask	
-    
+    from daqhats import mcc118, hats
+    from daqhats_utils import select_hat_device, chan_list_to_mask
+
 # Store locations of generated simulation parameters, daq settings and spinning waveplate settings (json files).
 sim_settings_file = 'settings/simsettings.json'
 daq_settings_file = 'settings/daqsettings.json'
@@ -74,9 +72,9 @@ else:
         if not run_offline:
             channel_mask = chan_list_to_mask(channels)
             num_channels = len(channels)
-            address = select_hat_device(HatIDs.MCC_118)
+            address = select_hat_device(hats.HatIDs.MCC_118)
             hat = mcc118(address)
-            options = OptionFlags.CONTINUOUS
+            options = hats.OptionFlags.CONTINUOUS
 
 # Print error if the spinning wave plate (SWP) settings path is not an existing regular file. 
 # File must be in location specified. Suggests generation of a default json file.
@@ -88,6 +86,7 @@ if not os.path.isfile(swp_settings_file):
 else:
     # TODO: auto_scale_y_trace (bool) doesn't have an obvious purpose--investigate and 
     #       rename or remove accordingly. *** I think remove but want to try in lab first -WS ***
+    #       Note: Tested and numerical issues do not occur from comparing incompatible trace scales.
     
     # Retrieving hardcoded SWP settings from json file. 
     with open(swp_settings_file,'r') as f:
@@ -164,7 +163,8 @@ def fetch_input_data(idx):
         sim_phi = float(idx/18.)
         w = 2*np.pi*5100/60     
 
-        # Demonstrates different polarization types by cycling the simulated Stokes vectors every 50 frames from elliptical -> linear -> circular 
+        # Demonstrates different polarization types by cycling the simulated Stokes vectors
+        # every 50 frames from elliptical -> linear -> circular
         
         # *** Not wanted in final version -- is that all offline sim code or just this "demo"? -WS ***
         if np.mod(int(idx/50),3) == 0:
@@ -178,9 +178,9 @@ def fetch_input_data(idx):
         
         # Stores the simulated data input through external function along with trigger data.
         input_data = swp.simulate_polarization_data(sim_S, w, t, sim_siglevel, sim_ns_level, sim_digitize, sim_bg_level, sim_wp_phi, sim_trigger_phase)
-        trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
-    
+        trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12) # TODO: MAKE SURE THIS MAKES SENSE
     # ONLINE SCENARIO
+
     
     # Begins input data scan through mcc118 hat and reads in list.
     # Stores input data and subtracts background data/light incident on photodetector.
@@ -214,8 +214,8 @@ def animate_fun(idx):
     input_data, trigger_data, idx = fetch_input_data(idx)
 
     # Separating data into "chunks" and retrieving total number of chunks created (based on swp frequency).
-    chunk_border_indecies = swp.extract_chunks(trigger_data, TEST = input_data)
-    num_chunks = len(chunk_border_indecies)-1
+    chunk_border_indices = swp.extract_chunks(trigger_data, TEST = input_data)
+    num_chunks = len(chunk_border_indices)-1
     
     # Holds rolling average of points per chunk (PPC). Used for accuracy warning.
     # For each chunk we calculate the 0, 2w, and 4w components, averaged over all chunks.
@@ -224,7 +224,7 @@ def animate_fun(idx):
     # Creating chunks and calculating Stokes vectors of each chunk (see "polarimeter_analysis" doc). 
     S = np.zeros(4)
     for k in range(num_chunks):
-        chunk = np.array(input_data[chunk_border_indecies[k]:chunk_border_indecies[k+1]]) - bg_level
+        chunk = np.array(input_data[chunk_border_indices[k]:chunk_border_indices[k+1]]) - bg_level
         S += swp.get_stokes_from_chunk(chunk, wp_ret=wp_phi, phs_ofst=trigger_phase, verbose=False)
         # Update (PPC)
         Nroll = (Nroll*k + len(chunk))/(k+1)

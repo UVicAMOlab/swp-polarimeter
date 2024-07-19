@@ -2,11 +2,11 @@
     This file contains helper functions for the MCC DAQ HAT Python examples.
 """
 from __future__ import print_function
-from daqhats import hat_list, HatError
+from daqhats import hats
 
 
 def select_hat_device(filter_by_id):
-    # type: (HatIDs) -> int
+    # type: (hats.HatIDs) -> int
     """
     This function performs a query of available DAQ HAT devices and determines
     the address of a single DAQ HAT device to be used in an example.  If a
@@ -29,24 +29,24 @@ def select_hat_device(filter_by_id):
     selected_hat_address = None
 
     # Get descriptors for all of the available HAT devices.
-    hats = hat_list(filter_by_id=filter_by_id)
-    number_of_hats = len(hats)
+    all_hat = hats.hat_list(filter_by_id=filter_by_id)
+    number_of_hats = len(all_hat)
 
     # Verify at least one HAT device is detected.
     if number_of_hats < 1:
-        raise HatError(0, 'Error: No HAT devices found')
+        raise hats.HatError(0, 'Error: No HAT devices found')
     elif number_of_hats == 1:
-        selected_hat_address = hats[0].address
+        selected_hat_address = all_hat[0].address
     else:
         # Display available HAT devices for selection.
-        for hat in hats:
+        for hat in all_hat:
             print('Address ', hat.address, ': ', hat.product_name, sep='')
         print('')
 
         address = int(input('Select the address of the HAT device to use: '))
 
         # Verify the selected address if valid.
-        for hat in hats:
+        for hat in all_hat:
             if address == hat.address:
                 selected_hat_address = address
                 break
