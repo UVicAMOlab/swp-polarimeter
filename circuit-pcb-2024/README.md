@@ -26,6 +26,6 @@ The SWPPhotodiodeGuide.pdf file gives a detailed description of the circuit and 
 
 ## Editing
 
-You are free to download the KiCad files and open them in KiCad 8.0 or newer. Guidelines for editing are given in SWPPhotodiodeGuide.pdf.
+You are free to download the KiCad files and open them in KiCad 8.0 or newer. Suggestions for editing are given in SWPPhotodiodeGuide.pdf.
 
 *Owen Sandner*
