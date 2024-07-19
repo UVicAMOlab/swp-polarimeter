@@ -5,7 +5,7 @@ from daqhats_utils import select_hat_device, chan_list_to_mask
 import swptools as swp
 import json
 import os.path
-import scipy.optimize as opt
+import scipy.signal as sig
 
 # NOTE: "Calibrate_Background.py" and "Calibrate_trigger_delay.py" Required Before This File Is Reliable
 daq_settings_file = 'settings/daqsettings.json'
@@ -44,14 +44,13 @@ else:
 		bg_level = swp_params["bg_level"]
 		phi = swp_params["trigger_phase"]
 
-def s(wt, A, B):
-	return A*np.sin(wt-phi) + B
-
 num_traces = 9
 maxs = np.zeros(9)
 mins = np.zeros(9)
-save_chunk = []
-save_wt = []
+savewt = []
+savechunk = []
+savefilt = []
+sos = sig.butter(4, 0.15, output = "sos")
 for trace in range(num_traces):
 	hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
 	read_result = hat.a_in_scan_read(samples_per_channel, timeout)
@@ -68,12 +67,14 @@ for trace in range(num_traces):
 	for k in range(num_chunks):
 		chunk = input_data[chunk_border_indices[k]:chunk_border_indices[k + 1]]
 		wt = np.linspace(0, 2 * np.pi, len(chunk))
-		vars = opt.curve_fit(s, wt, chunk)[0]
-		maxs[trace] = vars[1] + vars[0]
-		mins[trace] = vars[1] - vars[0]
+		signal = sig.sosfiltfilt(sos, chunk)
+		maxs[trace] = max(signal)
+		mins[trace] = min(signal)
+
 		if k == num_chunks - 1:
-			save_wt = np.append(save_wt, wt)
-			save_chunk = np.append(save_chunk, chunk)
+			savewt = np.append(savewt, wt)
+			savechunk = np.append(savechunk, chunk)
+			savefilt = np.append(savefilt, signal)
 
 v_max = np.mean(maxs)
 v_min = np.mean(mins)
@@ -88,8 +89,8 @@ with open(swp_settings_file,'r') as f:
 with open(swp_settings_file,'w') as f:
 	json.dump(params, f)
 
-plt.plot(save_wt, save_chunk)
-plt.plot(save_wt, s(save_wt, (v_max-v_min)/2, (v_max+v_min)/2))
+plt.plot(savewt, savechunk)
+plt.plot(savewt, savefilt)
 plt.show()
 
 print('done')
