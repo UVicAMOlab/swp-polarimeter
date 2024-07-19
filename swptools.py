@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.integrate as integ
 
 def extract_chunks(trigger_data, threshold = 1, schmidt = 10, TEST=[]):
     '''Partitions wave data into chunks.
@@ -41,11 +42,11 @@ Returns:
     wt = np.linspace(0,2*np.pi,len(chunk))
 
     # Calculating coefficients of equation (21) in polarimeter_analysis.pdf
-    a0 = np.trapz(chunk,wt)/(2*np.pi)
-    n0 = np.trapz(chunk*np.cos(2*(wt-phs_ofst)),wt)/np.pi   # not found in eq. (21) -- used for alignment check
-    b0 = np.trapz(chunk*np.sin(2*(wt-phs_ofst)),wt)/np.pi
-    c0 = np.trapz(chunk*np.cos(4*(wt-phs_ofst)),wt)/np.pi
-    d0 = np.trapz(chunk*np.sin(4*(wt-phs_ofst)),wt)/np.pi
+    a0 = integ.simpson(chunk,x=wt)/(2*np.pi)
+    n0 = integ.simpson(chunk*np.cos(2*(wt-phs_ofst)),x=wt)/np.pi   # not found in eq. (21) -- used for alignment check
+    b0 = integ.simpson(chunk*np.sin(2*(wt-phs_ofst)),x=wt)/np.pi
+    c0 = integ.simpson(chunk*np.cos(4*(wt-phs_ofst)),x=wt)/np.pi
+    d0 = integ.simpson(chunk*np.sin(4*(wt-phs_ofst)),x=wt)/np.pi
 
     cos_delta = np.cos(wp_ret)
     sin_delta = np.sin(wp_ret)
@@ -53,7 +54,7 @@ Returns:
     # Calculating results of equations (22a-d) in polarimeter_analysis.pdf
     # S0 = 2*(a0 - c0*(1+cos_delta)/(1-cos_delta))    # total intensity of optical beam
     S1 = 4*c0/(1-cos_delta)                         # preponderance of LHP over LVP
-    S2 = 4*d0/(1-cos_delta)                         # preponderance of L+45P over L-45P
+    S2 = 4*d0/(1-cos_delta)                       # preponderance of L+45P over L-45P
     S3 = -2*b0/sin_delta                            # preponderance of RCP over LCP
     S0 = 2*a0 - (1+cos_delta)*S1/2
 
@@ -79,11 +80,9 @@ def get_polarization_ellipse(S, num_points = 200, scale_by_dop = True, verbose =
     - num_points: number of points in x,y arrays
     - scale_by_dop: Scale down ellipse for partial polarization
     - verbose: enable logging (currently to terminal)
-    '''    
-
-    S /= S[0]
-
-    DOP = np.sqrt(sum(S[1:]**2))
+    '''
+    DOP = np.sqrt(S[1]**2 + S[2]**2 + S[3]**2)/S[0]
+    S = S/S[0]
     for stokes_vector in S:
         if abs(stokes_vector) > 1:
             if verbose:
@@ -94,6 +93,10 @@ def get_polarization_ellipse(S, num_points = 200, scale_by_dop = True, verbose =
         S1 = S[1]/DOP
         S2 = S[2]/DOP
         S3 = S[3]/DOP
+    else:
+        S1 = S[1]
+        S2 = S[2]
+        S3 = S[3]
 
     psi = 0.5*np.arctan2(S2,S1)
     chi = 0.5*np.arcsin(S3)
@@ -137,20 +140,18 @@ def get_polarization_ellipse(S, num_points = 200, scale_by_dop = True, verbose =
 #      one call that returns multiple values that are then used. This will also 
 #      help keep polvis.py clean and straight forward for more generic users.
 def simulate_polarization_data(sim_S, w, t, sig_level = 1, ns_level = 0, digitize_mV = 0, v_bias = 0, dphi = np.pi/2, ofst = 0):
-    '''Generates simulated polarization data from a given simulated array of Stokes vectors.
-
-    - w: sim angular frequency
-    - t: sim time domain
-    - sig_level:
-    - ns_level: sim noise level
-    - digitize_mv: 
-    - v_bias: sim background voltage from ambient light on photodiode 
-    - dphi: sim waveplate retardance
-    - ofst: sim trigger phase offset
-
-    Output:
-    - trace: simulated array of input voltages from photodiode 
-    '''
+    """Generates simulated polarization data from a given simulated array of Stokes vectors.
+        - w: sim angular frequency
+        - t: sim time domain
+        - sig_level:
+        - ns_level: sim noise level
+        - digitize_mv:
+        - v_bias: sim background voltage from ambient light on photodiode
+        - dphi: sim waveplate retardance
+        - ofst: sim trigger phase offset
+        Output:
+        - trace: simulated array of input voltages from photodiode
+    """
     num_points = len(t)
 
     # Constructing coefficients from equation (21) of polarimeter_analysis.pdf
@@ -160,7 +161,7 @@ def simulate_polarization_data(sim_S, w, t, sig_level = 1, ns_level = 0, digitiz
     d = (1-np.cos(dphi))*sim_S[2]/4
 
     ns = ns_level*np.random.randn(num_points)
-    trace = (a + b*np.sin(2*w*t - 4*np.pi*ofst) + c*np.cos(4*w*t - 8*np.pi*ofst) + d*np.sin(4*w*t - 8*np.pi*ofst))*sig_level + ns + v_bias
+    trace = (a + b*np.sin(2*(w*t - ofst)) + c*np.cos(4*(w*t - ofst)) + d*np.sin(4*(w*t - ofst)))*sig_level + ns + v_bias
 
     if digitize_mV > 0:
         trace = np.around(trace*1000/digitize_mV)*digitize_mV/1000

@@ -1,1 +1,1 @@
-{"trigger_phase": 0, "wp_phi": 2.57079632679, "bg_level": 0.4, "auto_scale_y_trace": false, "log_data_file": "", "protect_overwrite": true}
+{"trigger_phase": 0.1, "wp_phi": 2.57079632679, "bg_level": 0.1, "auto_scale_y_trace": false, "log_data_file": "", "protect_overwrite": true}
