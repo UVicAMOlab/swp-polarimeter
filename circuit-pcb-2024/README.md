@@ -8,7 +8,7 @@ There is also a PDF that goes in depth into how the circuit works, how it is lai
 
 # Ordering your own
 
-To order your own photodiode circuit, you need accounts on DigiKey as well as PCBWay. Other PCB manufacturers work, but you may need to send them different files.
+To order your own photodiode circuit, you need accounts on DigiKey as well as PCBWay. Other PCB manufacturers work, but you may need to send them different files. As of July 2024, excluding shipping, the parts cost less than $15, and the boards cost $5.
 
 ## DigiKey
 
