@@ -14,9 +14,9 @@ else:
 					'sim_siglevel': 1,
 					'sim_ns_level': 0.03,
 					'sim_DOP': 0.7,
-					'sim_vbias': 0.003,
-					'wp_phase': 1.982,
-					'sim_phase_offset': 0.404,
+					'sim_bg_level': 0.003,
+					'sim_wp_phi': 1.982,
+					'sim_trigger_phase': 0.404,
 					'sim_poltype': 'right'
 				}
 	print(f'No simulation file found. Creating file: {sim_settings_file}')

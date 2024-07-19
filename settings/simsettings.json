@@ -1,1 +1,1 @@
-{"sim_digitize": 0.0, "sim_siglevel": 1, "sim_ns_level": 0.00, "sim_DOP": 1.0, "sim_vbias": 0.4, "wp_phase": 2.57079632679, "sim_phase_offset": 0, "sim_poltype": "right"}
+{"sim_digitize": 0.0, "sim_siglevel": 1, "sim_ns_level": 0.00, "sim_DOP": 1.0, "sim_bg_level": 0.4, "sim_wp_phi": 2.57079632679, "sim_trigger_phase": 0, "sim_poltype": "right"}
