@@ -1491,6 +1491,12 @@
 		(uuid "078b7737-e2a8-4f38-a592-81d913c8c4c0")
 	)
 	(junction
+		(at 123.19 130.81)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "0b33ef05-0b62-43a7-98b4-0fc539d67a98")
+	)
+	(junction
 		(at 39.37 83.82)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1521,12 +1527,6 @@
 		(uuid "23f6c861-d0bb-45c1-a8f8-99fb054d29e9")
 	)
 	(junction
-		(at 127 130.81)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3a834eff-8a5b-48ed-943f-65d354657ce4")
-	)
-	(junction
 		(at 49.53 69.85)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1549,6 +1549,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5438c92c-a6b0-47ec-9c59-344d013d5e77")
+	)
+	(junction
+		(at 113.03 130.81)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "656200c5-98c3-4fd4-9093-4fe5ce213ece")
 	)
 	(junction
 		(at 39.37 57.15)
@@ -1597,18 +1603,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8cae8980-c7a5-4009-a542-2bec7cc3c9e9")
-	)
-	(junction
-		(at 113.03 130.81)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "9c9cf931-a5ba-4ea6-8549-c5fe90966721")
-	)
-	(junction
-		(at 137.16 130.81)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "9f9589ee-3542-4673-b2e1-88f227fc7f74")
 	)
 	(junction
 		(at 25.4 57.15)
@@ -1808,6 +1802,16 @@
 	)
 	(wire
 		(pts
+			(xy 123.19 130.81) (xy 137.16 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ddab0db-d1be-473e-940f-711b517d24ba")
+	)
+	(wire
+		(pts
 			(xy 41.91 72.39) (xy 39.37 72.39)
 		)
 		(stroke
@@ -1835,6 +1839,16 @@
 			(type default)
 		)
 		(uuid "34540d01-5e72-40cd-a403-284893a93abe")
+	)
+	(wire
+		(pts
+			(xy 113.03 130.81) (xy 123.19 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "34b72688-dc2c-4104-b247-9779bb9e7c14")
 	)
 	(wire
 		(pts
@@ -2068,6 +2082,16 @@
 	)
 	(wire
 		(pts
+			(xy 92.71 130.81) (xy 102.87 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "69700e88-ea46-4a7a-991b-a965d2987d03")
+	)
+	(wire
+		(pts
 			(xy 49.53 57.15) (xy 49.53 59.69)
 		)
 		(stroke
@@ -2158,23 +2182,13 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 130.81) (xy 116.84 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "86afe646-466b-4bc2-9134-9e3393decf08")
-	)
-	(wire
-		(pts
 			(xy 102.87 130.81) (xy 113.03 130.81)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8751f75c-9f2e-49cf-bf11-630ed5cfab6b")
+		(uuid "86afe646-466b-4bc2-9134-9e3393decf08")
 	)
 	(wire
 		(pts
@@ -2245,16 +2259,6 @@
 			(type default)
 		)
 		(uuid "91390707-f5e8-4bfc-b36a-6743e83e234f")
-	)
-	(wire
-		(pts
-			(xy 127 130.81) (xy 137.16 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "916cb1bd-fd32-4a30-a1bc-456ca3a4afc4")
 	)
 	(wire
 		(pts
@@ -2405,16 +2409,6 @@
 			(type default)
 		)
 		(uuid "b4e6d910-8207-405a-9b85-a16148b88d94")
-	)
-	(wire
-		(pts
-			(xy 100.33 130.81) (xy 102.87 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bac433a0-8143-4b46-850f-531412377479")
 	)
 	(wire
 		(pts
@@ -2618,16 +2612,6 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 130.81) (xy 127 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e105d717-41e4-45c1-b084-244d031b83cf")
-	)
-	(wire
-		(pts
 			(xy 27.94 97.79) (xy 27.94 111.76)
 		)
 		(stroke
@@ -2786,9 +2770,9 @@
 		)
 		(uuid "51495e10-8dc3-46c5-b0d6-a6f292d8f2d6")
 	)
-	(text "POWER IN, filtered to 15Hz"
+	(text "POWER IN"
 		(exclude_from_sim no)
-		(at 131.826 148.336 0)
+		(at 140.208 148.336 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2873,72 +2857,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 137.16 138.43 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0a0de91e-2829-4fee-bac9-297e37210953")
-		(property "Reference" "#PWR011"
-			(at 137.16 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 137.16 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 137.16 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 137.16 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 137.16 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "26f78f91-2a31-40eb-92d8-e1009dab9c7a")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "#PWR011")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:VCC")
 		(at 87.63 90.17 0)
 		(unit 1)
@@ -2999,82 +2917,6 @@
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
 					(reference "#PWR01")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 96.52 130.81 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0ccb5bf3-602d-4fda-87d5-57c29d1d8858")
-		(property "Reference" "R9"
-			(at 96.52 133.35 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "53k"
-			(at 96.52 130.81 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 96.52 132.588 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 96.52 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 96.52 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey Part Number" "2019-RN73H2BTTD5302F50CT-ND"
-			(at 96.52 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d168a822-72f5-441c-900a-1ccc998cdac4")
-		)
-		(pin "2"
-			(uuid "dcdd1e68-f159-4e5b-8959-030355e809bb")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "R9")
 					(unit 1)
 				)
 			)
@@ -3616,7 +3458,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3df039e6-d6c1-4eef-9ff8-efdb466eb6eb")
-		(property "Reference" "R11"
+		(property "Reference" "R8"
 			(at 23.114 78.74 90)
 			(effects
 				(font
@@ -3677,7 +3519,83 @@
 		(instances
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "R11")
+					(reference "R8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 113.03 134.62 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3eb02cb3-5826-48f1-beaf-03e9cca88f51")
+		(property "Reference" "C11"
+			(at 110.49 137.668 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 116.84 137.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 113.9952 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 113.03 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 113.03 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey Part Number" "311-1140-1-ND"
+			(at 113.03 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3eb7d7c8-91dc-44e9-8ed2-cd88fb0641c7")
+		)
+		(pin "2"
+			(uuid "5d29d40f-c512-4190-941a-b6c793ebe2af")
+		)
+		(instances
+			(project "ShippingPolarimeterPD"
+				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
+					(reference "C11")
 					(unit 1)
 				)
 			)
@@ -3761,7 +3679,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 127 138.43 0)
+		(at 123.19 138.43 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3770,7 +3688,7 @@
 		(fields_autoplaced yes)
 		(uuid "4d3b6c5c-1b57-4509-bd25-2fd3e3024c85")
 		(property "Reference" "#PWR09"
-			(at 127 144.78 0)
+			(at 123.19 144.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3779,7 +3697,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 127 143.51 0)
+			(at 123.19 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3787,7 +3705,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 127 138.43 0)
+			(at 123.19 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3796,7 +3714,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 127 138.43 0)
+			(at 123.19 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3805,7 +3723,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 127 138.43 0)
+			(at 123.19 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3820,82 +3738,6 @@
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
 					(reference "#PWR09")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 120.65 130.81 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "61e95182-09eb-459c-ae50-a82910b6e898")
-		(property "Reference" "R10"
-			(at 120.65 128.27 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "53k"
-			(at 120.65 130.81 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 120.65 132.588 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 120.65 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 120.65 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey Part Number" "2019-RN73H2BTTD5302F50CT-ND"
-			(at 120.65 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1a396d63-1a8f-4f7d-ae7a-a37b6b348a9e")
-		)
-		(pin "2"
-			(uuid "9d44c42e-05c4-4a1c-a216-ab5a27520b50")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -3972,6 +3814,72 @@
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
 					(reference "J1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 113.03 138.43 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7bedc72c-8ab4-4137-a812-6e8e1f46a33c")
+		(property "Reference" "#PWR08"
+			(at 113.03 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 113.03 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 113.03 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 113.03 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 113.03 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "206d0e44-ea60-4035-bd15-da830c0d4737")
+		)
+		(instances
+			(project "ShippingPolarimeterPD"
+				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -4131,7 +4039,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 127 134.62 0)
+		(at 123.19 134.62 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4139,15 +4047,15 @@
 		(dnp no)
 		(uuid "8926ce12-dad4-44f7-882d-00310fd391c0")
 		(property "Reference" "C12"
-			(at 124.46 137.16 90)
+			(at 120.65 137.922 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "100nF"
-			(at 130.81 137.16 90)
+		(property "Value" "10nF"
+			(at 127 137.16 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4155,7 +4063,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
-			(at 127.9652 138.43 0)
+			(at 124.1552 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4164,7 +4072,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 127 134.62 0)
+			(at 123.19 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4173,7 +4081,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 127 134.62 0)
+			(at 123.19 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4181,8 +4089,8 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey Part Number" "478-KGM21NR71H104JTCT-ND"
-			(at 127 134.62 0)
+		(property "DigiKey Part Number" "490-4781-1-ND"
+			(at 123.19 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4200,82 +4108,6 @@
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
 					(reference "C12")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 113.03 134.62 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "91f210d3-f9c0-4e0e-840c-f2e9d42022c1")
-		(property "Reference" "C11"
-			(at 110.49 137.16 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF"
-			(at 116.84 137.16 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
-			(at 113.9952 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 113.03 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 113.03 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey Part Number" "478-KGM21NR71H104JTCT-ND"
-			(at 113.03 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2fad3d1f-51fe-4c9d-8f1b-65d8481538dc")
-		)
-		(pin "2"
-			(uuid "8525f577-649a-44e8-b97a-5e8b625b5805")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "C11")
 					(unit 1)
 				)
 			)
@@ -4651,14 +4483,14 @@
 		(dnp no)
 		(uuid "a1601f16-b2b7-4d9a-839f-d454a3d9b1e3")
 		(property "Reference" "C10"
-			(at 100.33 137.16 90)
+			(at 100.33 137.668 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "100nF"
+		(property "Value" "1uF"
 			(at 106.68 137.16 90)
 			(effects
 				(font
@@ -4666,7 +4498,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_2225_5664Metric_Pad1.80x6.60mm_HandSolder"
 			(at 103.8352 138.43 0)
 			(effects
 				(font
@@ -4693,7 +4525,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey Part Number" "478-KGM21NR71H104JTCT-ND"
+		(property "DigiKey Part Number" "445-2304-1-ND"
 			(at 102.87 134.62 0)
 			(effects
 				(font
@@ -5006,148 +4838,6 @@
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
 					(reference "C6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 113.03 138.43 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c41ee006-6e26-48f8-95ce-57ce2f163198")
-		(property "Reference" "#PWR08"
-			(at 113.03 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 113.03 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 113.03 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 113.03 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 113.03 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ff10656e-2393-4f16-9fee-f5682e32e190")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "#PWR08")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 137.16 134.62 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ca8c29d9-7551-43e6-9c44-41fe3e4ad384")
-		(property "Reference" "C13"
-			(at 134.62 137.16 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF"
-			(at 140.97 137.16 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
-			(at 138.1252 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 137.16 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 137.16 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey Part Number" "478-KGM21NR71H104JTCT-ND"
-			(at 137.16 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2a1e24e6-b9ce-4641-bdb7-5d974792bcb3")
-		)
-		(pin "2"
-			(uuid "065ed88b-18d2-4704-b2fc-0466dd34c0cc")
-		)
-		(instances
-			(project "PolarimeterPF"
-				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "C13")
 					(unit 1)
 				)
 			)
@@ -5627,7 +5317,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f5a99229-496b-4f91-b8e8-21b26741d8ca")
-		(property "Reference" "R8"
+		(property "Reference" "R9"
 			(at 113.03 97.79 90)
 			(effects
 				(font
@@ -5670,7 +5360,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey Part Number" "2019-RN73H2BTTD5302F50CT-ND"
+		(property "DigiKey Part Number" "311-53.6KHRCT-ND"
 			(at 113.03 100.33 0)
 			(effects
 				(font
@@ -5688,7 +5378,7 @@
 		(instances
 			(project "PolarimeterPF"
 				(path "/a8da08ed-25f2-4f2a-a5c6-b60eff4de847"
-					(reference "R8")
+					(reference "R9")
 					(unit 1)
 				)
 			)

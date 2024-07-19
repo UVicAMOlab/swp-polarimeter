@@ -36,9 +36,9 @@ if run_offline:
             sim_siglevel = simpams['sim_siglevel']
             sim_ns_level = simpams['sim_ns_level']
             sim_DOP = simpams['sim_DOP']
-            sim_bg_level = simpams['sim_vbias']
-            sim_wp_phi = simpams['wp_phase']
-            sim_trigger_phase = simpams['sim_phase_offset']
+            sim_bg_level = simpams['sim_bg_level']
+            sim_wp_phi = simpams['sim_wp_phi']
+            sim_trigger_phase = simpams['sim_trigger_phase']
             sim_poltype = simpams['sim_poltype']
             if sim_poltype == 'right':
                 sim_S = np.array([1,0,0,1])

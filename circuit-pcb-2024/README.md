@@ -8,7 +8,7 @@ There is also a PDF that goes in depth into how the circuit works, how it is lai
 
 # Ordering your own
 
-To order your own photodiode circuit, you need accounts on DigiKey as well as PCBWay. Other PCB manufacturers work, but you may need to send them different files.
+To order your own photodiode circuit, you need accounts on DigiKey as well as PCBWay. Other PCB manufacturers work, but you may need to send them different files. As of July 2024, excluding shipping, the parts cost less than $15, and the boards cost $5.
 
 ## DigiKey
 
@@ -26,6 +26,6 @@ The SWPPhotodiodeGuide.pdf file gives a detailed description of the circuit and 
 
 ## Editing
 
-You are free to download the KiCad files and open them in KiCad 8.0 or newer. Guidelines for editing are given in SWPPhotodiodeGuide.pdf.
+You are free to download the KiCad files and open them in KiCad 8.0 or newer. Suggestions for editing are given in SWPPhotodiodeGuide.pdf.
 
 *Owen Sandner*
