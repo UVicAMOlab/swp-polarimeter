@@ -12,10 +12,12 @@ from daqhats_utils import select_hat_device, chan_list_to_mask
 import swptools as swp
 import json
 import os.path
+import time
 
-# SET NUMBER OF SAMPLES HERE -> Dictated by Timeout in seconds?
-Timeout = 1000
+# SET NUMBER OF SAMPLES HERE -> Dictated by Delay in seconds
+delay = 1000
 Rotation_Period = np.array([])
+Timeout = delay + 5
 
 # Initialize daq settings
 daq_settings_file = 'settings/daqsettings.json'
@@ -41,6 +43,7 @@ sample_period = 1/scan_rate
 
 # Read for as long as the timeout settings indicate. Isolate for period of each chunk.
 hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
+time.sleep(delay)
 read_result = hat.a_in_scan_read(samples_per_channel, Timeout)
 
 trigger_data = read_result.data[1::2]
