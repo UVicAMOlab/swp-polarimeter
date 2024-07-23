@@ -15,6 +15,12 @@ v_max = 0.0
 bg_level = 0.0
 phi = 0
 
+# Define function for filtering
+def lowpass(data: np.ndarray, cutoff: float, sample_rate: float, poles: int = 5):
+	sos = sig.butter(poles, cutoff, 'lowpass', fs=sample_rate, output='sos')
+	filtered_data = sig.sosfiltfilt(sos, data)
+	return filtered_data
+
 # Grab Sampling Data from Json File
 if not os.path.isfile(daq_settings_file):
 	print(f'Error: simulation file {daq_settings_file} not found.')
@@ -50,7 +56,6 @@ mins = np.zeros(9)
 savewt = []
 savechunk = []
 savefilt = []
-sos = sig.butter(4, 0.15, output = "sos")
 for trace in range(num_traces):
 	hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
 	read_result = hat.a_in_scan_read(samples_per_channel, timeout)
@@ -67,7 +72,7 @@ for trace in range(num_traces):
 	for k in range(num_chunks):
 		chunk = input_data[chunk_border_indices[k]:chunk_border_indices[k + 1]]
 		wt = np.linspace(0, 2 * np.pi, len(chunk))
-		signal = sig.sosfiltfilt(sos, chunk)
+		signal = lowpass(chunk, 500, scan_rate)
 		maxs[trace] = max(signal)
 		mins[trace] = min(signal)
 
