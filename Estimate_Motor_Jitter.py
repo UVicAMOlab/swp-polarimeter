@@ -17,6 +17,7 @@ import time
 # SET NUMBER OF SAMPLES HERE -> Dictated by Delay in seconds
 delay = 1000
 Rotation_Period = np.array([])
+dthdt = np.array([])
 Timeout = delay + 5
 
 # Initialize daq settings
@@ -56,7 +57,10 @@ hat.a_in_scan_cleanup()
 
 for k in range(num_chunks):
     chunk_period = (chunk_border_indices[k+1] - chunk_border_indices[k])*sample_period
+    av_rot_speeds = 1/chunk_period
     Rotation_Period = np. append(Rotation_Period, chunk_period)
+    if not (k == 0 or k == num_chunks-1):
+        dthdt = np.append(dthdt, (av_rot_speeds[k+1] - av_rot_speeds[k])/sample_period)
 
 mean = np.mean(Rotation_Period)
 std = np.std(Rotation_Period, ddof=1)
@@ -66,6 +70,17 @@ minval = min(Rotation_Period)
 
 print(f"The Rotation Period is {np.around(mean,5)} +/- {np.around(un_mean,5)} with a standard deviation of {np.around(std,5)}, a maximium value of {np.around(maxval,5)} and a minimum value of {np.around(minval,5)}.")
 
+mean = np.mean(dthdt)
+std = np.std(dthdt, ddof=1)
+un_mean = std/np.sqrt(dthdt.size)
+maxval = max(dthdt)
+minval = min(dthdt)
+print(f"The average angular acceleration per cycle is {np.around(mean,5)} +/- {np.around(un_mean,5)} with a standard deviation of {np.around(std,5)}, a maximium value of {np.around(maxval,5)} and a minimum value of {np.around(minval,5)}.")
+
 sample_num = np.arange(0, Rotation_Period.size - 1, 1)
 plt.plot(sample_num, Rotation_Period)
+plt.show()
+
+sample_num = np.arange(0, dthdt.size - 1, 1)
+plt.plot(sample_num, dthdt)
 plt.show()
