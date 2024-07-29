@@ -97,7 +97,7 @@ else:
         wp_phi = swp_params['wp_phi']
         auto_scale_y_trace = swp_params['auto_scale_y_trace']
         bg_level = swp_params['bg_level']
-        data_log_file = swp_params['log_data_file']
+        data_log_file = "data/" + swp_params['log_data_file']
 
 if do_save:
     try:
