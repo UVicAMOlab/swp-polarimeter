@@ -1,9 +1,10 @@
-# polvis.py
-# 
-# # Import vital packages/tools.
+# ps_polvis.py
+
+# Import vital packages/tools.
 import swptools as swp
 import numpy as np
 from matplotlib import pyplot as plt, animation
+from mpl_toolkits.mplot3d import axes3d
 import json
 import os.path
 
@@ -11,6 +12,7 @@ import os.path
 run_offline = True
 # Save data log in file specified within swp_settings_file.
 do_save = False
+poincare = False
 
 if not run_offline:
     from daqhats import mcc118, hats
@@ -109,7 +111,14 @@ fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
 ln1, = ax1.plot([], [], lw=2)
 bar = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='center')
 bar2 = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='edge',alpha = .3)
-ln3, = ax3.plot([],[], lw=2, label = 'trace')
+
+# ===== Axis 3 is eith scope trace or Poincare sphere
+if poincare:
+    ax3 = fig.add_subplot(1,3,3, projection = '3d')
+    pt = ax3.scatter([0.5],[0.5],[0.707],facecolor='tab:blue',s=100)
+    ln3, = ax3.plot(np.array([0,0.5]),np.array([0,0.0]),np.array([0,0.0]),color='tab:red',lw=3)
+else:
+    ln3, = ax3.plot([],[], lw=2, label = 'trace')
 # Initiating text variables.
 txt1 = ax1.text(-.95,0.9,'',fontsize = 12)
 txt2 = ax1.text(-.95, 0.8, '', fontsize = 12, color = 'blue')
@@ -142,11 +151,52 @@ def init_animation():
     ax2.set_xlabel('Stokes Parameter')
     ax2.set_title('Stokes Parameters')
 
+    # Now we begin the monumental task of creating the 3D plot:
     # Graph parameters for photodiode trace.
-    ax3.set_xlim(-1,1000)
-    ax3.set_ylim(0,3)
-    ax3.set_title('Trace')
-    ax3.grid()
+    if not poincare:
+        ax3.set_xlim(-1,1000)
+        ax3.set_ylim(0,3)
+        ax3.set_title('Trace')
+        ax3.grid()
+    else: # Now we begin the monumental task of creating the 3D plot ...
+        u = np.linspace(0.0,2*np.pi,30)
+        v = np.linspace(0.0,np.pi,60)
+        lu = np.size(u)
+        lv = np.size(v)
+        X = np.zeros((lu,lv))
+        Y = np.zeros((lu,lv))
+        Z = np.zeros((lu,lv))
+    
+        for uu in range(0,lu):
+            for vv in range(0,lv):
+                X[uu,vv]= np.cos(u[uu])*np.sin(v[vv])
+                Y[uu,vv]= np.sin(u[uu])*np.sin(v[vv])
+                Z[uu,vv]= np.cos(v[vv])
+        srf = ax3.plot_surface(X, Y, Z,alpha=.2,color = 'gray')
+        # Now add the axes and spherical gridlines:
+        tht = np.linspace(0,2*np.pi,360)
+        ax3.plot([-1,1],[0,0],[0,0],lw=2,color = 'black')
+        ax3.plot([0,0],[-1,1],[0,0],lw=2,color = 'black')
+        ax3.plot([0,0],[0,0],[-1,1],lw=2,color = 'black')
+        ax3.plot(np.cos(tht),np.sin(tht),0*tht,color = 'gray',alpha = 0.6)
+        
+        ax3.plot(np.cos(tht),0*tht,np.sin(tht),color = 'black',alpha = 0.5)
+        ax3.plot(0*tht,np.sin(tht),np.cos(tht),color = 'black',alpha = 0.5)
+        ax3.plot(np.sin(tht),np.cos(tht),0*tht,color = 'black',alpha = 0.5)
+    
+        # Add the labels
+        fsz = 16
+        ax3.text(1.3,0,0,'H',color='tab:blue',fontsize=fsz)
+        ax3.text(-1.3,0,0,'V',color='tab:blue',fontsize=fsz)
+        ax3.text(0,-1.3,0,'-45',color='tab:red',fontsize=fsz)
+        ax3.text(0,1.1,0,'+45',color='tab:red',fontsize=fsz)
+        ax3.text(0,0,1.2,'R',color='tab:green',fontsize=fsz)
+        ax3.text(0,0,-1.3,'L',color='tab:green',fontsize=fsz)
+    
+        ax3.view_init(elev=30, azim=30)
+
+        for phi0 in np.linspace(-np.pi/2,np.pi/2,12):
+            ax3.plot(np.cos(tht)*np.cos(phi0),np.sin(tht)*np.cos(phi0),np.sin(phi0),color = 'gray',alpha = 0.4) 
 
     return ln1, bar, txt1, ln3, txt_err
 
@@ -275,13 +325,6 @@ def animate_fun(idx):
 
     ln3.set_data(range(len(input_data)),input_data)
     ax3.set_xlim(0, len(input_data))
-    
-    # *** Want to plot live once rasp pi is merged with this code to see if auto_scale_y_trace has purpose - WS ***
-    
-    # ln3.set_data(range(len(chunk)),chunk)
-    # if auto_scale_y_trace:
-    #     ax3.set_ylim(min(chunk) + 0.001, max(chunk) +0.001)
-    # ax3.set_xlim(0, len(chunk))
 
     return ln1, bar, txt1, ln3,
 
