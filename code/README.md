@@ -5,7 +5,7 @@ The file "gen_default_json.py" is used to initialize the files for storing setti
 
 Before use, the daqhats library should be downloaded from https://github.com/mccdaq/daqhats and the contained folder daqhats should be moved or copied to this folder ("code"). 
 
-Python 3.12 is required for operation. Required libraries are numpy, matplotlib.pyplot, datetime, 
+Python 3.12 is required for operation. Required standard libraries are numpy, matplotlib.pyplot, datetime, 
 
 All code is open sourced and can be downloaded or distributed freely.
 
