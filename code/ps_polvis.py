@@ -11,7 +11,7 @@ import os.path
 # When run_offline = True, simulated polarization data will be used.
 run_offline = True
 # Save data log in file specified within swp_settings_file.
-do_save = False
+do_save = True
 poincare = True
 
 if not run_offline:
