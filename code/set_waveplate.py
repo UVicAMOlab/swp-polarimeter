@@ -5,21 +5,18 @@ from daqhats_utils import select_hat_device, chan_list_to_mask
 import swptools as swp
 import json
 import os.path
-import scipy.signal as sig
 
-# NOTE: "Calibrate_Background.py" and "Calibrate_trigger_delay.py" Required Before This File Is Reliable
+# NOTE: "Calibrate_Background.py" and "Calibrate_trigger_delay.py" Required Before This File Is Reliable.
+# NOTE: "Input Light Must Be Horizontally Polarized Prior During Calibration.
+# If Polarization State is Unknown and Polarizers Unavailable, Polvis Can Be Run With Incorrect Settings to Determine
+# Approximate Direction Or Trace Can Be Observed For Same Effect.
+
 daq_settings_file = 'settings/daqsettings.json'
 swp_settings_file = 'settings/swpsettings.json'
 v_min = 0.0
 v_max = 0.0
 bg_level = 0.0
 phi = 0
-
-# Define function for filtering
-def lowpass(data: np.ndarray, cutoff: float, sample_rate: float, poles: int = 5):
-	sos = sig.butter(poles, cutoff, 'lowpass', fs=sample_rate, output='sos')
-	filtered_data = sig.sosfiltfilt(sos, data)
-	return filtered_data
 
 # Grab Sampling Data from Json File
 if not os.path.isfile(daq_settings_file):
@@ -55,7 +52,6 @@ maxs = np.zeros(9)
 mins = np.zeros(9)
 savewt = []
 savechunk = []
-savefilt = []
 for trace in range(num_traces):
 	hat.a_in_scan_start(channel_mask, samples_per_channel, scan_rate, options)
 	read_result = hat.a_in_scan_read(samples_per_channel, timeout)
@@ -72,14 +68,12 @@ for trace in range(num_traces):
 	for k in range(num_chunks):
 		chunk = input_data[chunk_border_indices[k]:chunk_border_indices[k + 1]]
 		wt = np.linspace(0, 2 * np.pi, len(chunk))
-		signal = lowpass(chunk, 500, scan_rate)
-		maxs[trace] = max(signal)
-		mins[trace] = min(signal)
+		maxs[trace] = np.percentile(chunk, 98)
+		mins[trace] = np.percentile(chunk, 2)
 
 		if k == num_chunks - 1:
 			savewt = np.append(savewt, wt)
 			savechunk = np.append(savechunk, chunk)
-			savefilt = np.append(savefilt, signal)
 
 v_max = np.mean(maxs)
 v_min = np.mean(mins)
@@ -95,7 +89,6 @@ with open(swp_settings_file,'w') as f:
 	json.dump(params, f)
 
 plt.plot(savewt, savechunk)
-plt.plot(savewt, savefilt)
 plt.show()
 
 print('done')

@@ -6,11 +6,13 @@ import numpy as np
 from matplotlib import pyplot as plt, animation
 import json
 import os.path
+import csv
+import datetime
 
 # When run_offline = True, simulated polarization data will be used.
 run_offline = True
 # Save data log in file specified within swp_settings_file.
-do_save = False
+do_save = True
 
 if not run_offline:
     from daqhats import mcc118, hats
@@ -95,13 +97,18 @@ else:
         wp_phi = swp_params['wp_phi']
         auto_scale_y_trace = swp_params['auto_scale_y_trace']
         bg_level = swp_params['bg_level']
-        data_log_file = swp_params['log_data_file']
+        data_log_file = "data/" + swp_params['log_data_file']
 
-        if data_log_file != '':
-            do_save = True
-            with open(data_log_file,'w') as f:
-                f.write('')
-
+if do_save:
+    try:
+        with open(data_log_file, "r") as file:
+            print("CSV File Exists")
+    except:
+        print("Creating New CSV File")
+        with open(data_log_file, 'w') as file:
+            writer = csv.writer(file)
+            field = ["Timestamp", "S0", "S1", "S2", "S3", "DOP"]
+            writer.writerow(field)
 
 # Setting up figure canvas.
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
@@ -237,10 +244,12 @@ def animate_fun(idx):
     
     # Saving if specified.
     if do_save: 
-        with open(data_log_file,'a') as f:
-            f.write(f'{S[1]},{S[2]},{S[3]},{DOP}\n')
+        with open(data_log_file,'a') as file:
+            tnow = datetime.datetime.now()
+            inwriter = csv.writer(file)
+            inwriter.writerow([f"{tnow}, {S[0]}, {S[1]}, {S[2]}, {S[3]}, {DOP}"])
 
-    # Possibile warnings.
+    # Possible warnings.
     if Nroll < 180:
         estr+=f'PPC too low ({int(Nroll)})    '
     if DOP-1 > .03:
@@ -286,6 +295,6 @@ def animate_fun(idx):
     return ln1, bar, txt1, ln3,
 
 # Begins animation.
-annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150)
+annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150, cache_frame_data=False)
 plt.show()
  
