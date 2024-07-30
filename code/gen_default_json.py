@@ -6,6 +6,10 @@ sim_settings_file = 'settings/simsettings.json'
 daq_settings_file = 'settings/daqsettings.json'
 swp_settings_file = 'settings/swpsettings.json'
 
+if not os.path.isdir('settings'):
+	print('Settings directory doesn\'t exist! Making one...')
+	os.mkdir('./settings')
+
 # ------- Simulation data ----
 if os.path.isfile(sim_settings_file):
 	print(f'Found simulation data file: {sim_settings_file}... Skipping')
