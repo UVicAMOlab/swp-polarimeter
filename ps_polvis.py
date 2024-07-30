@@ -1,18 +1,18 @@
-# polvis.py
-# 
-# # Import vital packages/tools.
+# ps_polvis.py
+
+# Import vital packages/tools.
 import swptools as swp
 import numpy as np
 from matplotlib import pyplot as plt, animation
+from mpl_toolkits.mplot3d import axes3d
 import json
 import os.path
-import csv
-import datetime
 
 # When run_offline = True, simulated polarization data will be used.
 run_offline = True
 # Save data log in file specified within swp_settings_file.
-do_save = True
+do_save = False
+poincare = True
 
 if not run_offline:
     from daqhats import mcc118, hats
@@ -97,18 +97,13 @@ else:
         wp_phi = swp_params['wp_phi']
         auto_scale_y_trace = swp_params['auto_scale_y_trace']
         bg_level = swp_params['bg_level']
-        data_log_file = "data/" + swp_params['log_data_file']
+        data_log_file = swp_params['log_data_file']
 
-if do_save:
-    try:
-        with open(data_log_file, "r") as file:
-            print("CSV File Exists")
-    except:
-        print("Creating New CSV File")
-        with open(data_log_file, 'w') as file:
-            writer = csv.writer(file)
-            field = ["Timestamp", "S0", "S1", "S2", "S3", "DOP"]
-            writer.writerow(field)
+        if data_log_file != '':
+            do_save = True
+            with open(data_log_file,'w') as f:
+                f.write('')
+
 
 # Setting up figure canvas.
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
@@ -116,7 +111,20 @@ fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
 ln1, = ax1.plot([], [], lw=2)
 bar = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='center')
 bar2 = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='edge',alpha = .3)
-ln3, = ax3.plot([],[], lw=2, label = 'trace')
+
+# ===== Axis 3 is eith scope trace or Poincare sphere
+if poincare:
+    ax3.get_xaxis().set_ticks([])
+    ax3.get_yaxis().set_ticks([])
+    ax3.axis('off')
+    # ax3.get_zaxis().set_ticks([])
+    ax3 = fig.add_subplot(1,3,3, projection = '3d')
+    pt = ax3.scatter([0.5],[0.5],[0.707],facecolor='tab:blue',s=100)
+    ln3, = ax3.plot(np.array([0,0.5]),np.array([0,0.0]),np.array([0,0.0]),color='tab:red',lw=3)
+
+else:
+    ln3, = ax3.plot([],[], lw=2, label = 'trace')
+    pt = ax3.plot([],[], label = 'dummy')
 # Initiating text variables.
 txt1 = ax1.text(-.95,0.9,'',fontsize = 12)
 txt2 = ax1.text(-.95, 0.8, '', fontsize = 12, color = 'blue')
@@ -149,13 +157,65 @@ def init_animation():
     ax2.set_xlabel('Stokes Parameter')
     ax2.set_title('Stokes Parameters')
 
+    # Now we begin the monumental task of creating the 3D plot:
     # Graph parameters for photodiode trace.
-    ax3.set_xlim(-1,1000)
-    ax3.set_ylim(0,3)
-    ax3.set_title('Trace')
-    ax3.grid()
-
-    return ln1, bar, txt1, ln3, txt_err
+    if not poincare:
+        ax3.set_xlim(-1,1000)
+        ax3.set_ylim(0,3)
+        ax3.set_title('Trace')
+        ax3.grid()
+    else: # Now we begin the monumental task of creating the 3D plot ...
+        # ------------------- 
+        # == DEFINE SPHERE ==
+        # ------------------- 
+        
+        # define points for poincare sphere
+        u = np.linspace(0.0,2*np.pi,20)
+        v = np.linspace(0.0,np.pi,40)
+        lu = np.size(u)
+        lv = np.size(v)
+        X = np.zeros((lu,lv))
+        Y = np.zeros((lu,lv))
+        Z = np.zeros((lu,lv))
+        
+        for uu in range(0,lu):
+            for vv in range(0,lv):
+                X[uu,vv]= np.cos(u[uu])*np.sin(v[vv])
+                Y[uu,vv]= np.sin(u[uu])*np.sin(v[vv])
+                Z[uu,vv]= np.cos(v[vv])
+                
+        # Plot the surface
+        srf = ax3.plot_surface(X, Y, Z,alpha=.1,color = 'gray')
+        
+        # Now plot axes
+        tht = np.linspace(0,2*np.pi,360)
+        ax3.plot([-1,1],[0,0],[0,0],lw=2,color = 'black')
+        ax3.plot([0,0],[-1,1],[0,0],lw=2,color = 'black')
+        ax3.plot([0,0],[0,0],[-1,1],lw=2,color = 'black')
+        ax3.plot(np.cos(tht),np.sin(tht),0*tht,color = 'gray',alpha = 0.6)
+        
+        # ... and Wireframe
+        ax3.plot(np.cos(tht),0*tht,np.sin(tht),color = 'black',alpha = 0.5)
+        ax3.plot(0*tht,np.sin(tht),np.cos(tht),color = 'black',alpha = 0.5)
+        ax3.plot(np.sin(tht),np.cos(tht),0*tht,color = 'black',alpha = 0.5)
+        for phi0 in np.linspace(-np.pi/2,np.pi/2,12):
+            ax3.plot(np.cos(tht)*np.cos(phi0),np.sin(tht)*np.cos(phi0),np.sin(phi0),color = 'gray',alpha = 0.4)
+        
+        # Label the axes
+        ax3.text(1.3,0,0,'H',color='tab:blue',fontsize=20)
+        ax3.text(-1.3,0,0,'V',color='tab:blue',fontsize=20)
+        ax3.text(0,-1.3,0,'-45',color='tab:red',fontsize=20)
+        ax3.text(0,1.1,0,'+45',color='tab:red',fontsize=20)
+        ax3.text(0,0,1.2,'R',color='tab:green',fontsize=20)
+        ax3.text(0,0,-1.3,'L',color='tab:green',fontsize=20)
+        # ------------------- 
+        # ==     DONE      ==
+        # ------------------- 
+        
+        # Now for the point on the sphere that will get to movin'
+        
+        ax3.view_init(elev=30, azim=30)
+    return ln1, bar, txt1, ln3, pt, txt_err
 
 def fetch_input_data(idx):
     '''
@@ -244,12 +304,10 @@ def animate_fun(idx):
     
     # Saving if specified.
     if do_save: 
-        with open(data_log_file,'a') as file:
-            tnow = datetime.datetime.now()
-            inwriter = csv.writer(file)
-            inwriter.writerow([f"{tnow}, {S[0]}, {S[1]}, {S[2]}, {S[3]}, {DOP}"])
+        with open(data_log_file,'a') as f:
+            f.write(f'{S[1]},{S[2]},{S[3]},{DOP}\n')
 
-    # Possible warnings.
+    # Possibile warnings.
     if Nroll < 180:
         estr+=f'PPC too low ({int(Nroll)})    '
     if DOP-1 > .03:
@@ -282,19 +340,20 @@ def animate_fun(idx):
     x, y = swp.get_polarization_ellipse(S)
     ln1.set_data(x,y)
 
-    ln3.set_data(range(len(input_data)),input_data)
-    ax3.set_xlim(0, len(input_data))
-    
-    # *** Want to plot live once rasp pi is merged with this code to see if auto_scale_y_trace has purpose - WS ***
-    
-    # ln3.set_data(range(len(chunk)),chunk)
-    # if auto_scale_y_trace:
-    #     ax3.set_ylim(min(chunk) + 0.001, max(chunk) +0.001)
-    # ax3.set_xlim(0, len(chunk))
+    if not poincare:
+        ln3.set_data(range(len(input_data)),input_data)
+        ax3.set_xlim(0, len(input_data))
+    else:
+        dtx = np.array([0,S[1]])
+        dty = np.array([0,S[2]])
+        dtz = np.array([0,S[3]])
+
+        ln3.set_data(dtx,dty)
+        ln3.set_3d_properties(dtz)
+        pt._offsets3d = ([S[1]],[S[2]],[S[3]])
 
     return ln1, bar, txt1, ln3,
 
 # Begins animation.
-annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150, cache_frame_data=False)
+annie = animation.FuncAnimation(fig, animate_fun, init_func=init_animation, interval=150)
 plt.show()
- 

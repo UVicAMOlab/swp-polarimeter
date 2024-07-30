@@ -1,5 +1,6 @@
 #
 settings/
+test-poincare-anim.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
