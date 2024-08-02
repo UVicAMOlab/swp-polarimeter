@@ -12,7 +12,9 @@ import datetime
 # When run_offline = True, simulated polarization data will be used.
 run_offline = True
 # Save data log in file specified within swp_settings_file.
-do_save = True
+# Select either Poincare sphere (poincare = True) or trace (poincare = False) for display.
+do_save = False
+poincare = True
 
 if not run_offline:
     from daqhats import mcc118, hats
@@ -86,10 +88,7 @@ if not os.path.isfile(swp_settings_file):
     exit()
 
 else:
-    # TODO: auto_scale_y_trace (bool) doesn't have an obvious purpose--investigate and 
-    #       rename or remove accordingly. *** I think remove but want to try in lab first -WS ***
-    #       Note: Tested and numerical issues do not occur from comparing incompatible trace scales.
-    
+
     # Retrieving hardcoded SWP settings from json file. 
     with open(swp_settings_file,'r') as f:
         swp_params = json.load(f)
@@ -116,11 +115,48 @@ fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
 ln1, = ax1.plot([], [], lw=2)
 bar = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='center')
 bar2 = ax2.bar([0, 1, 2, 3], [0, 0, 0, 0], align='edge',alpha = .3)
-ln3, = ax3.plot([],[], lw=2, label = 'trace')
+
+# ===== Axis 3 is eith scope trace or Poincare sphere
+if poincare:
+    ax3.get_xaxis().set_ticks([])
+    ax3.get_yaxis().set_ticks([])
+    ax3.axis('off')
+    # ax3.get_zaxis().set_ticks([])
+    ax3 = fig.add_subplot(1,3,3, projection = '3d')
+    pt = ax3.scatter([0.5],[0.5],[0.707],facecolor='tab:blue',s=100)
+
+    tht = np.linspace(0, 2 * np.pi, 360)
+    ax3.plot([-1, 1], [0, 0], [0, 0], lw=2, color='black')
+    ax3.plot([0, 0], [-1, 1], [0, 0], lw=2, color='black')
+    ax3.plot([0, 0], [0, 0], [-1, 1], lw=2, color='black')
+    ax3.plot(np.cos(tht), np.sin(tht), 0 * tht, color='lightgray', alpha=0.6)
+
+    # ... and Wireframe
+    ax3.plot(np.cos(tht), 0 * tht, np.sin(tht), color='black', alpha=0.5)
+    ax3.plot(0 * tht, np.sin(tht), np.cos(tht), color='black', alpha=0.5)
+    ax3.plot(np.sin(tht), np.cos(tht), 0 * tht, color='black', alpha=0.5)
+    for phi0 in np.linspace(-np.pi / 2, np.pi / 2, 12):
+        ax3.plot(np.cos(tht) * np.cos(phi0), np.sin(tht) * np.cos(phi0), np.sin(phi0), color='lightgray', alpha=0.4)
+
+    # Label the axes
+    ax3.text(1.4, 0, 0, 'H', color='tab:red', fontsize=20)
+    ax3.text(-1., 0, 0, 'V', color='tab:red', fontsize=20)
+    ax3.text(0, -1.3, 0, '-45', color='tab:red', fontsize=20)
+    ax3.text(0, 0.8, 0, '+45', color='tab:red', fontsize=20)
+    ax3.text(0, 0, 1.0, 'R', color='tab:red', fontsize=20)
+    ax3.text(0, 0, -1.1, 'L', color='tab:red', fontsize=20)
+
+    ln3, = ax3.plot(np.array([0,0.5]),np.array([0,0.0]),np.array([0,0.0]),color='tab:red',lw=3)
+
+else:
+    ln3, = ax3.plot([],[], lw=2, label = 'trace')
+    pt = ax3.plot([],[], label = 'dummy')
+
 # Initiating text variables.
-txt1 = ax1.text(-.95,0.9,'',fontsize = 12)
-txt2 = ax1.text(-.95, 0.8, '', fontsize = 12, color = 'blue')
+txt1 = ax2.text(-.5250,-.970,'',fontsize = 12)
+txt2 = ax1.text(-.95, 0.9, '', fontsize = 12, color = 'blue')
 txt_err = ax1.text(-1.25,-1.35,'', fontsize = 10, color = 'red')
+
 
 def init_animation():
     '''
@@ -143,19 +179,47 @@ def init_animation():
 
     # Graph parameters for bar graph.
     ax2.set_xlim(-0.6, 3.6)
-    ax2.set_ylim(-1.05, 1.05)
+    ax2.set_ylim(-1.0, 1.0)
     ax2.set_xticks([0, 1, 2, 3])
     ax2.set_xticklabels(['S0', 'S1', 'S2', 'S3'])
-    ax2.set_xlabel('Stokes Parameter')
+    ax2.set_xlabel('Normalized Stokes Parameters')
     ax2.set_title('Stokes Parameters')
+    ax2.set_aspect(2.1)
 
-    # Graph parameters for photodiode trace.
-    ax3.set_xlim(-1,1000)
-    ax3.set_ylim(0,3)
-    ax3.set_title('Trace')
-    ax3.grid()
+    # Graph parameters for photodiode trace or poincare sphere.
+    if not poincare:
+        ax3.set_xlim(-1, 6)
+        ax3.set_ylim(0, 12)
+        ax3.set_xlabel('Sample Number in Data Block')
+        ax3.set_ylabel('Voltage [V]')
+        ax3.plot([0, num_samples],[2,2],linestyle='dashed', color='black')
+        ax3.plot([0, num_samples], [10, 10], linestyle='dashed', color='black')
+        ax3.set_title('Trace')
+        ax3.grid()
+        ax3.set_aspect(int(1000/6))
+    else:
+        ax3.set_title("Poincare Sphere")
+        # define points for poincare sphere
+        u = np.linspace(0.0, 2 * np.pi, 20)
+        v = np.linspace(0.0, np.pi, 40)
+        lu = np.size(u)
+        lv = np.size(v)
+        X = np.zeros((lu, lv))
+        Y = np.zeros((lu, lv))
+        Z = np.zeros((lu, lv))
 
-    return ln1, bar, txt1, ln3, txt_err
+        for uu in range(0, lu):
+            for vv in range(0, lv):
+                X[uu, vv] = np.cos(u[uu]) * np.sin(v[vv])
+                Y[uu, vv] = np.sin(u[uu]) * np.sin(v[vv])
+                Z[uu, vv] = np.cos(v[vv])
+
+        # Plot the surface
+        srf = ax3.plot_surface(X, Y, Z, alpha=.1, color='lightgray')
+
+        ax3.view_init(elev=30, azim=30)
+        ax3.set_aspect('auto')
+    return ln1, bar, txt1, ln3, pt, txt_err
 
 def fetch_input_data(idx):
     '''
@@ -185,9 +249,7 @@ def fetch_input_data(idx):
         
         # Stores the simulated data input through external function along with trigger data.
         input_data = swp.simulate_polarization_data(sim_S, w, t, sim_siglevel, sim_ns_level, sim_digitize, sim_bg_level, sim_wp_phi, sim_trigger_phase)
-        trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12) # TODO: MAKE SURE THIS MAKES SENSE
-    # ONLINE SCENARIO
-
+        trigger_data = 5*(np.mod(w*t, 2*np.pi) < np.pi/12)
     
     # Begins input data scan through mcc118 hat and reads in list.
     # Stores input data and subtracts background data/light incident on photodetector.
@@ -258,7 +320,8 @@ def animate_fun(idx):
         estr += f'Light level too low    '
     if num_chunks < 3:
         estr += f'Insufficient chunks    '
-    
+    if not run_offline and (np.mean(input_data) < 2 or max(input_data) > 10):
+        estr += f'Signal voltage out of range (adjust gain)      '
     # Displaying error(s) and DOP on canvas.
     txt_err.set_text(f'({round(np.mean(input_data),2)},{round(S[1],2)},{round(S[2],2)},{round(S[3],2)})\n'+estr)
     
@@ -276,21 +339,22 @@ def animate_fun(idx):
     #Updating plots.
     for i in range(len(S)):
         bar[i].set_height(S[i])
-        if run_offline:
-            bar2[i].set_height(sim_S[i]/sim_S[0])
+        #if run_offline:
+           # bar2[i].set_height(sim_S[i]/sim_S[0])
 
     x, y = swp.get_polarization_ellipse(S)
     ln1.set_data(x,y)
 
-    ln3.set_data(range(len(input_data)),input_data)
-    ax3.set_xlim(0, len(input_data))
-    
-    # *** Want to plot live once rasp pi is merged with this code to see if auto_scale_y_trace has purpose - WS ***
-    
-    # ln3.set_data(range(len(chunk)),chunk)
-    # if auto_scale_y_trace:
-    #     ax3.set_ylim(min(chunk) + 0.001, max(chunk) +0.001)
-    # ax3.set_xlim(0, len(chunk))
+    if not poincare:
+        ln3.set_data(range(len(input_data)),3*input_data)
+        ax3.set_xlim(0, len(input_data))
+    else:
+        dtx = np.array([0,S[1]])
+        dty = np.array([0,S[2]])
+        dtz = np.array([0,S[3]])
+        ln3.set_data(dtx, dty)
+        ln3.set_3d_properties(dtz)
+        pt._offsets3d = ([S[1]], [S[2]], [S[3]])
 
     return ln1, bar, txt1, ln3,
 

@@ -70,17 +70,6 @@ minval = min(Rotation_Period)
 
 print(f"The Rotation Period is {np.around(mean,5)} +/- {np.around(un_mean,5)} with a standard deviation of {np.around(std,5)}, a maximium value of {np.around(maxval,5)} and a minimum value of {np.around(minval,5)}.")
 
-mean = np.mean(dthdt)
-std = np.std(dthdt, ddof=1)
-un_mean = std/np.sqrt(dthdt.size)
-maxval = max(dthdt)
-minval = min(dthdt)
-print(f"The average angular acceleration per cycle is {np.around(mean,5)} +/- {np.around(un_mean,5)} with a standard deviation of {np.around(std,5)}, a maximium value of {np.around(maxval,5)} and a minimum value of {np.around(minval,5)}.")
-
 sample_num = np.arange(0, Rotation_Period.size - 1, 1)
 plt.plot(sample_num, Rotation_Period)
-plt.show()
-
-sample_num = np.arange(0, dthdt.size - 1, 1)
-plt.plot(sample_num, dthdt)
 plt.show()

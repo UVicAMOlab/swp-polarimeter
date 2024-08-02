@@ -68,8 +68,8 @@ for trace in range(num_traces):
 	for k in range(num_chunks):
 		chunk = input_data[chunk_border_indices[k]:chunk_border_indices[k + 1]]
 		wt = np.linspace(0, 2 * np.pi, len(chunk))
-		maxs[trace] = np.percentile(chunk, 98)
-		mins[trace] = np.percentile(chunk, 2)
+		maxs[trace] = np.percentile(chunk, 99)
+		mins[trace] = np.percentile(chunk, 1)
 
 		if k == num_chunks - 1:
 			savewt = np.append(savewt, wt)

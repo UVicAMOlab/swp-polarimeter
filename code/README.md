@@ -9,4 +9,4 @@ Python 3.12 is required for operation. Required standard libraries are numpy, ma
 
 All code is open sourced and can be downloaded or distributed freely.
 
-**Brendan Mackey**
+*Brendan Mackey*
